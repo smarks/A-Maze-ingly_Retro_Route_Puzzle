@@ -1,8 +1,8 @@
 package com.origamisoftware.puzzle;
 
-import com.origamisoftware.puzzle.util.XMLUtils;
+import com.origamisoftware.puzzle.model.RoomNode;
 import com.origamisoftware.puzzle.util.MapUtils;
-
+import com.origamisoftware.puzzle.util.XMLUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -10,6 +10,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Main entry point for the  A-Maze-ingly Retro Route Puzzle
@@ -20,7 +21,7 @@ import java.io.IOException;
  *
  * @author <a href="mailto:smarks@origamisoftware.com"></a>
  */
-public class FindRoute {
+public class FindRouteApplication {
 
 
     /**
@@ -45,6 +46,13 @@ public class FindRoute {
         System.exit(code);
     }
 
+    private static void printMap(Map<String, RoomNode> map) {
+        for (String roomKeys : map.keySet()) {
+
+            System.out.println(map.get(roomKeys));
+        }
+
+    }
 
     /**
      * Main entry point
@@ -64,10 +72,15 @@ public class FindRoute {
         }
 
         try {
-            MapUtils.buildMapModelFromDocument(XMLUtils.parseXML(appArgs.map));
+            Map<String, RoomNode> map = MapUtils.buildMapModelFromDocument(XMLUtils.parseXML(appArgs.map));
+            printMap(map);
+
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new IllegalStateException("Could not parse " + appArgs.map, e);
         }
+
     }
 
+
 }
+

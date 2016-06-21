@@ -10,24 +10,40 @@ import java.util.List;
  */
 public class RoomNode {
 
+    /**
+     * List of edges from this room to other rooms
+     */
     List<Edge> edges;
+
+    /**
+     * Contents of the room
+     */
     RoomInventory contents;
+
+    /**
+     * the display name
+     */
     String name;
 
-    public  RoomNode(String name) {
+    /**
+     * The node id
+     */
+    String id;
+
+
+    public RoomNode(String name, String id) {
         this.name = name;
-        contents = RoomInventory.EMPTY;
-        edges = new ArrayList<>();
+        this.contents = RoomInventory.EMPTY;
+        this.edges = new ArrayList<>();
+        this.id = id;
     }
 
-    public RoomNode(List<Edge> edges, RoomInventory contents, String name) {
-        this.edges = edges;
-        this.contents = contents;
-        this.name = name;
+    public RoomNode(String id) {
+        this.id = id;
     }
 
-    public void addEdge(Edge edge) {
-        edges.add(edge);
+    public void addEdge(String roomId, LinkDirections directions) {
+        edges.add(new Edge(this.id, roomId, directions));
     }
 
     public List<Edge> getEdges() {
@@ -41,13 +57,18 @@ public class RoomNode {
     public String getName() {
         return name;
     }
+
     public void setContents(RoomInventory contents) {
         this.contents = contents;
     }
+
     @Override
     public String toString() {
-        return "RoomNode{" + "edges=" + edges + ", contents=" + contents + ", name='" + name + '\'' + '}';
+        return name + ", contents= " + contents + ", \n\t" + edges;
     }
 
 
+    public void setName(String name) {
+        this.name = name;
+    }
 }

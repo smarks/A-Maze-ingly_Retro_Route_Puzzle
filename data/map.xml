@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <!DOCTYPE map
-[
-    <!ELEMENT map (room*)>
+        [
+                <!ELEMENT map (room*)>
 
-    <!ELEMENT room (object*)>
-    <!ATTLIST room id       ID      #REQUIRED>
-    <!ATTLIST room name     CDATA   #REQUIRED>
-    <!ATTLIST room north    IDREF   #IMPLIED>
-    <!ATTLIST room south    IDREF   #IMPLIED>
-    <!ATTLIST room east     IDREF   #IMPLIED>
-    <!ATTLIST room west     IDREF   #IMPLIED>
+                <!ELEMENT room (object*)>
+                <!ATTLIST room id       ID      #REQUIRED>
+                <!ATTLIST room name     CDATA   #REQUIRED>
+                <!ATTLIST room north    IDREF   #IMPLIED>
+                <!ATTLIST room south    IDREF   #IMPLIED>
+                <!ATTLIST room east     IDREF   #IMPLIED>
+                <!ATTLIST room west     IDREF   #IMPLIED>
 
-    <!ELEMENT object (#PCDATA)>
-    <!ATTLIST object name ID #REQUIRED>
+                <!ELEMENT object (#PCDATA)>
+                <!ATTLIST object name ID #REQUIRED>
 
-]>
+                ]>
 
 <map>
     <room id="pond" name="Pond" east="dirt-track">

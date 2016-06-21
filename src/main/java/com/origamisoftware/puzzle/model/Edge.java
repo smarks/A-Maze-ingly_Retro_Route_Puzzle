@@ -6,23 +6,29 @@ package com.origamisoftware.puzzle.model;
 public class Edge {
 
     private LinkDirections direction;
-    private RoomNode a;
-    private RoomNode b;
+    private String fromRoomId;
+    private String toRoomId;
 
-    public Edge(RoomNode a, RoomNode b, LinkDirections direction) {
-        this.a = a;
-        this.b = b;
+    public Edge(String fromRoomId, String toRoomId, LinkDirections direction) {
+        this.fromRoomId = fromRoomId;
+        this.toRoomId = toRoomId;
+        this.direction = direction;
     }
 
     public LinkDirections getDirection() {
         return direction;
     }
 
-    public RoomNode getA() {
-        return a;
+    public String getFromRoomId() {
+        return fromRoomId;
     }
 
-    public RoomNode getB() {
-        return b;
+    public String getToRoomId() {
+        return toRoomId;
+    }
+
+    @Override
+    public String toString() {
+        return "Edge{" + "direction=" + direction + ", from " + fromRoomId + ",to " + toRoomId + '}';
     }
 }
