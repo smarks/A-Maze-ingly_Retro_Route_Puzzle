@@ -1,7 +1,7 @@
 package com.origamisoftware.puzzle.util;
 
+import com.origamisoftware.puzzle.model.AdventureMap;
 import com.origamisoftware.puzzle.model.LinkDirections;
-import com.origamisoftware.puzzle.model.RoomInventory;
 import com.origamisoftware.puzzle.model.RoomNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -12,21 +12,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Utilities for creating a map model from the XML data.
  */
 public class MapUtils {
-
 
     /**
      * Each node can have a link in any of the for cardinal directions
      */
-    // final private static String[] XML_LINK_ATTRIBUTE_NAMES = new String[]{"north", "east", "south", "west"};
 
     final private static String XML_TAG_NAME_FOR_ROOM = "room";
     final private static String XML_ROOM_ATTRIBUTE_NAME_FOR_ID = "id";
-    final private static String XML_ROOM_ATTRIBUTE_NAME_FOR_NAME = "name";
+    final private static String XML_ROOM_ATTRIBUTE_KEY_FOR_ROOM_NAME = "name";
+    final private static String XML_ROOM_ATTRIBUTE_KEY_FOR_OBJECT_NAME = "name";
 
-    public static Map<String, RoomNode> buildMapModelFromDocument(Document document) {
+    /**
+     * Convert an XML instance to a Map of RoomNodes by Id.
+     *
+     * @param document the XML document
+     * @return a Map where the key is the room id and the value which maps to a RoomNode.
+     */
+    public static AdventureMap buildMapModelFromDocument(Document document) {
 
         NodeList rooms = document.getElementsByTagName(XML_TAG_NAME_FOR_ROOM);
 
@@ -35,24 +40,27 @@ public class MapUtils {
         /* The roomNodes will hold the data in XML room elements. Since we know that size
          * we can pre-size our array avoiding any performance penalties  due to dynamic resizing
          */
-        Map<String, RoomNode> roomMapByName = new HashMap<>(count);
+        Map<String, RoomNode> roomMapById = new HashMap<>(count);
 
-        // get every room element in the xml and create a roomNode for them.
-        for (int index = 0; index < count; index++) {
-            node2RoomNode(roomMapByName, rooms.item(index));
+        // assume the first room in the map.xml is the starting point
+        RoomNode entryPoint = node2RoomNode(roomMapById, rooms.item(0));
+
+        // we already have the first room (0) now get every room element in the xml and create a roomNode for them.
+        for (int index = 1; index < count; index++) {
+            node2RoomNode(roomMapById, rooms.item(index));
         }
 
-        return roomMapByName;
+        return new AdventureMap(roomMapById,entryPoint);
     }
 
     private static RoomNode node2RoomNode(Map<String, RoomNode> roomMapById, Node node) {
 
         NamedNodeMap attributes = node.getAttributes();
         String roomId = attributes.getNamedItem(XML_ROOM_ATTRIBUTE_NAME_FOR_ID).getNodeValue();
-        String roomName = attributes.getNamedItem(XML_ROOM_ATTRIBUTE_NAME_FOR_NAME).getNodeValue();
+        String roomName = attributes.getNamedItem(XML_ROOM_ATTRIBUTE_KEY_FOR_ROOM_NAME).getNodeValue();
 
         RoomNode roomNode = new RoomNode(roomName, roomId);
-        roomMapById.put(roomName, roomNode);
+        roomMapById.put(roomId, roomNode);
 
         for (LinkDirections linkDirection : LinkDirections.values()) {
             String linkId = getAttributeValueOrNull(attributes, linkDirection.getXmlName());
@@ -80,14 +88,12 @@ public class MapUtils {
                 Node childNode = childNodes.item(index);
                 short nodeType = childNode.getNodeType();
                 if (nodeType == Node.ELEMENT_NODE) {
-                    String contentsName = childNode.getAttributes().getNamedItem("name").getNodeValue();
-                    // dashes are not permitted as identifiers in java so we do this replacement if want to use enums
-                    roomNode.setContents(RoomInventory.valueOf(contentsName.toUpperCase().replace("-", "_")));
+                    roomNode.setContents(childNode.getAttributes().getNamedItem(XML_ROOM_ATTRIBUTE_KEY_FOR_OBJECT_NAME)
+                            .getNodeValue());
                 }
             }
         }
     }
-
 
     private static String getAttributeValueOrNull(NamedNodeMap attributes, String attributeName) {
         String returnValue = null;

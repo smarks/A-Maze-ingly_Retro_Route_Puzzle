@@ -1,5 +1,6 @@
 package com.origamisoftware.puzzle;
 
+import com.origamisoftware.puzzle.model.AdventureMap;
 import com.origamisoftware.puzzle.model.RoomNode;
 import com.origamisoftware.puzzle.util.MapUtils;
 import com.origamisoftware.puzzle.util.XMLUtils;
@@ -47,8 +48,8 @@ public class FindRouteApplication {
     }
 
     private static void printMap(Map<String, RoomNode> map) {
+        System.out.println("There are " + map.size() + " rooms");
         for (String roomKeys : map.keySet()) {
-
             System.out.println(map.get(roomKeys));
         }
 
@@ -72,8 +73,8 @@ public class FindRouteApplication {
         }
 
         try {
-            Map<String, RoomNode> map = MapUtils.buildMapModelFromDocument(XMLUtils.parseXML(appArgs.map));
-            printMap(map);
+            AdventureMap  adventureMap = MapUtils.buildMapModelFromDocument(XMLUtils.parseXML(appArgs.map));
+            printMap(adventureMap.getRoomsById());
 
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new IllegalStateException("Could not parse " + appArgs.map, e);

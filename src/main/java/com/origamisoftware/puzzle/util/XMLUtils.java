@@ -15,7 +15,6 @@ import java.io.IOException;
  */
 public class XMLUtils {
 
-
     /**
      * Given a path to an XML instance parse it onto a Document.
      *

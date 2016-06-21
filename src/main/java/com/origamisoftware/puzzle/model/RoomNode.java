@@ -10,6 +10,8 @@ import java.util.List;
  */
 public class RoomNode {
 
+    private final String  EMPTY = "empty";
+
     /**
      * List of edges from this room to other rooms
      */
@@ -18,7 +20,7 @@ public class RoomNode {
     /**
      * Contents of the room
      */
-    RoomInventory contents;
+    String contents;
 
     /**
      * the display name
@@ -33,7 +35,7 @@ public class RoomNode {
 
     public RoomNode(String name, String id) {
         this.name = name;
-        this.contents = RoomInventory.EMPTY;
+        this.contents = EMPTY;
         this.edges = new ArrayList<>();
         this.id = id;
     }
@@ -50,7 +52,7 @@ public class RoomNode {
         return edges;
     }
 
-    public RoomInventory getContents() {
+    public String getContents() {
         return contents;
     }
 
@@ -58,8 +60,16 @@ public class RoomNode {
         return name;
     }
 
-    public void setContents(RoomInventory contents) {
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setContents(String contents) {
         this.contents = contents;
+    }
+
+    public String getId() {
+        return id;
     }
 
     @Override
@@ -68,7 +78,4 @@ public class RoomNode {
     }
 
 
-    public void setName(String name) {
-        this.name = name;
-    }
 }
