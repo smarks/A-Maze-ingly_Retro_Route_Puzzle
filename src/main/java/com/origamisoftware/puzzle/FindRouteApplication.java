@@ -11,6 +11,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,7 +77,14 @@ public class FindRouteApplication {
         try {
             AdventureMap  adventureMap = MapUtils.buildMapModelFromDocument(XMLUtils.parseXML(appArgs.map));
             printMap(adventureMap.getRoomsById());
-
+            List<RoomNode> path =new ArrayList<>();
+            boolean found = MapNavigator.findPathTo(adventureMap, "Pickaxe", path);
+            System.out.println("Item was found:" + found );
+            if (found) {
+                System.out.println("here is the path: " + path);
+            } else {
+                System.out.println(path.size());
+            }
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new IllegalStateException("Could not parse " + appArgs.map, e);
         }

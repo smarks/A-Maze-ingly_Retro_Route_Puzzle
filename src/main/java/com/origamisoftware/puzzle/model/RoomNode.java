@@ -1,7 +1,7 @@
 package com.origamisoftware.puzzle.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Models a room on the map.
@@ -10,33 +10,34 @@ import java.util.List;
  */
 public class RoomNode {
 
-    private final String  EMPTY = "empty";
+    private final String EMPTY = "empty";
 
     /**
-     * List of edges from this room to other rooms
+     * Adjacent Nodes
      */
-    List<Edge> edges;
+    public Map<String, String> neighbors = new HashMap<>();
 
     /**
      * Contents of the room
      */
-    String contents;
+    private String contents;
 
     /**
      * the display name
      */
-    String name;
+    private String name;
 
     /**
      * The node id
      */
-    String id;
+    private String id;
+
+    public boolean visited;
 
 
     public RoomNode(String name, String id) {
         this.name = name;
         this.contents = EMPTY;
-        this.edges = new ArrayList<>();
         this.id = id;
     }
 
@@ -44,12 +45,12 @@ public class RoomNode {
         this.id = id;
     }
 
-    public void addEdge(String roomId, LinkDirections directions) {
-        edges.add(new Edge(this.id, roomId, directions));
+    public void addNeighbor(String roomId, LinkDirections direction) {
+        neighbors.put(direction.toString(), roomId);
     }
 
-    public List<Edge> getEdges() {
-        return edges;
+    public Map<String, String> getNeighbors() {
+        return neighbors;
     }
 
     public String getContents() {
@@ -73,8 +74,38 @@ public class RoomNode {
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        RoomNode other = (RoomNode) obj;
+        if (id == null) {
+            if (other.id != null) {
+                return false;
+            }
+        } else if (!id.equals(other.id)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public String toString() {
-        return name + ", contents= " + contents + ", \n\t" + edges;
+        return name + ", contents= " + contents + ", \n\t" + neighbors;
     }
 
 

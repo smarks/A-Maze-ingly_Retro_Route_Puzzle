@@ -68,7 +68,7 @@ public class MapUtils {
             // lots of rooms won't have a link for each direction, that's OK
             if (linkId != null) {
                 // create an edge between current room and room being pointed to.
-                roomNode.addEdge(linkId, linkDirection);
+                roomNode.addNeighbor(linkId, linkDirection);
             }
         }
 
