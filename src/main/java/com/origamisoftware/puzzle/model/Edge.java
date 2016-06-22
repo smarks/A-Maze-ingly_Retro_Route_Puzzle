@@ -1,64 +1,40 @@
 package com.origamisoftware.puzzle.model;
 
 /**
- * Models an Edge in a graph (the line between two nodes)
+ *
  */
-public class Edge {
+public class Edge  {
 
-    /**
-     * The direction from one room to another e.g. north, east, west, south
-     */
-    private LinkDirections direction;
+    private final String id;
+    private final RoomNode source;
+    private final RoomNode destination;
+    private final int weight;
 
-    /**
-     * The originating room
-     */
-    private String fromRoomId;
-
-    /**
-     * The adjacent room
-     */
-    private String toRoomId;
-
-    /**
-     * Create a new Edge instance
-     *
-     * @param fromRoomId the starting room
-     * @param toRoomId the adjacent room
-     * @param direction the direction from the room to the room
-     */
-    public Edge(String fromRoomId, String toRoomId, LinkDirections direction) {
-        this.fromRoomId = fromRoomId;
-        this.toRoomId = toRoomId;
-        this.direction = direction;
+    public Edge(String id, RoomNode source, RoomNode destination) {
+        this.id = id;
+        this.source = source;
+        this.destination = destination;
+        this.weight = 1;
     }
 
-    /**
-     *
-     * @return get the direction
-     */
-    public LinkDirections getDirection() {
-        return direction;
+    public String getId() {
+        return id;
+    }
+    public RoomNode getDestination() {
+        return destination;
     }
 
-    /**
-     *
-     * @return the RoomNode ID for the originating room
-     */
-    public String getFromRoomId() {
-        return fromRoomId;
+    public RoomNode getSource() {
+        return source;
     }
-
-    /**
-     *
-     * @return the RoomNode ID for the adjacent room
-     */
-    public String getToRoomId() {
-        return toRoomId;
+    public int getWeight() {
+        return weight;
     }
 
     @Override
     public String toString() {
-        return "Edge{" + "direction=" + direction + ", from " + fromRoomId + ",to " + toRoomId + '}';
+        return source + " " + destination;
     }
+
+
 }

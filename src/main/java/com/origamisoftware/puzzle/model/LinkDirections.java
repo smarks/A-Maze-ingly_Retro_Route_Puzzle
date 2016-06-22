@@ -4,6 +4,7 @@ package com.origamisoftware.puzzle.model;
  *
  */
 public enum LinkDirections {
+
     NORTH("north"), SOUTH("south"), EAST("east"), WEST("west");
 
     private String xmlName;

@@ -1,0 +1,4 @@
+I used the following websites and books while completing this puzzle
+
+http://www.vogella.com/tutorials/JavaAlgorithmsDijkstra/article.html
+

@@ -3,7 +3,10 @@ package com.origamisoftware.puzzle.model;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 /**
  * Stores all the rooms on the adventure map along with helpful information about those rooms.
@@ -13,10 +16,12 @@ import java.util.Map;
  */
 public class AdventureMap {
 
-    RoomNode entryNode;
+    private RoomNode entryNode;
 
-    Map<String, RoomNode> roomContents = new HashMap<>();
-    Map<String, RoomNode> roomsById;
+    private Map<String, RoomNode> roomContentsFromXML = new HashMap<>();
+    private Map<String, RoomNode> roomsById;
+    private Map<String, RoomNode> roomContentsByBFS = new HashMap<>();
+
 
     /**
      * Creates a new AdventureMap
@@ -31,10 +36,52 @@ public class AdventureMap {
             RoomNode roomNode = roomsById.get(key);
             String contents = roomNode.getContents();
             if (!StringUtils.isEmpty(contents)) {
-                roomContents.put(contents, roomNode);
+                roomContentsFromXML.put(contents, roomNode);
             }
         }
+        roomContentsByBFS = findItems(this,roomContentsFromXML.keySet());
+        System.out.println(roomContentsByBFS.size() == roomContentsFromXML.size());
     }
+
+
+    /**
+     * Given an AdventureMap which contains both the entire map of rooms (or graph) and the starting point (initial node),
+     * look in all the rooms (nodes) and if they contain an item in the itemsToFind set, record the roomNode and
+     * it's contents in a Map. When all the rooms have been searched (all the nodes visited via BSF) return the
+     * Map.
+     *
+     * @param adventureMap a data structure that contains a graph of the rooms as well as the entry point
+     * @param itemsToFind
+     * @return
+     */
+    public static Map<String,RoomNode> findItems(AdventureMap adventureMap, Set<String> itemsToFind) {
+
+        Map<String,RoomNode> foundItems = new HashMap<>();
+
+        RoomNode node = adventureMap.getEntryNode();
+        Map<String, RoomNode> roomsById = adventureMap.getRoomsById();
+
+        Queue<RoomNode> queue = new LinkedList<RoomNode>();
+        node.visited = true;
+        queue.add(node);
+
+           while (!queue.isEmpty()) {
+            RoomNode v = queue.poll();
+
+            if (itemsToFind.contains(v.getContents())){
+                foundItems.put(v.getContents(),v);
+            }
+            for (String roomId : v.getNeighbors().values()) {
+                RoomNode w = roomsById.get(roomId);
+                if (!w.visited) {
+                    w.visited = true;
+                    queue.add(w);
+                }
+            }
+        }
+        return foundItems;
+    }
+
 
     /**
      * Get all the room nodes by room id
@@ -42,7 +89,7 @@ public class AdventureMap {
      * @return a map data structure of all the rooms on the adventure map
      */
     public Map<String, RoomNode> getRoomContents() {
-        return roomContents;
+        return roomContentsByBFS;
     }
 
     /**
@@ -61,7 +108,7 @@ public class AdventureMap {
      * @return a roomNode that contains the requested item or NULL.
      */
     public RoomNode getRoomThatContains(String contents) {
-        return roomContents.get(contents);
+        return roomContentsByBFS.get(contents);
     }
 
     /**

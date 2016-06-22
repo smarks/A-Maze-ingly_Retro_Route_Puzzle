@@ -1,7 +1,11 @@
 package com.origamisoftware.puzzle;
 
 import com.origamisoftware.puzzle.model.AdventureMap;
+import com.origamisoftware.puzzle.model.DijkstraAlgorithm;
+import com.origamisoftware.puzzle.model.Edge;
+import com.origamisoftware.puzzle.model.Graph;
 import com.origamisoftware.puzzle.model.RoomNode;
+import com.origamisoftware.puzzle.model.Vertex;
 import com.origamisoftware.puzzle.util.MapUtils;
 import com.origamisoftware.puzzle.util.XMLUtils;
 import org.kohsuke.args4j.CmdLineException;
@@ -11,7 +15,10 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -75,22 +82,67 @@ public class FindRouteApplication {
         }
 
         try {
-            AdventureMap  adventureMap = MapUtils.buildMapModelFromDocument(XMLUtils.parseXML(appArgs.map));
-            printMap(adventureMap.getRoomsById());
-            List<RoomNode> path =new ArrayList<>();
-            boolean found = MapNavigator.findPathTo(adventureMap, "Pickaxe", path);
-            System.out.println("Item was found:" + found );
-            if (found) {
-                System.out.println("here is the path: " + path);
-            } else {
-                System.out.println(path.size());
+            List<String> scenario = Files.readAllLines(Paths.get((appArgs.scenario)));
+
+
+            AdventureMap adventureMap = MapUtils.buildMapModelFromDocument(XMLUtils.parseXML(appArgs.map));
+
+            /*
+            Map<String, RoomNode> roomContents = MapNavigator.findItems(adventureMap, scenario);
+            roomContents.keySet().forEach(new Consumer<String>() {
+                @Override
+                public void accept(String item) {
+                    RoomNode roomNode = roomContents.get(item);
+                    System.out.println("Room " + roomNode + " contains: " + item);
+                }
+            });
+            if (scenario.size() != roomContents.size()) {
+                System.out.println("Cool, we found all the items!");
             }
+            */
+
+            RoomNode startingPoint = adventureMap.getRoomsById().get(scenario.get(0));
+            List<String> items = scenario.subList(1, scenario.size());
+
+            for (String item : items) {
+                startingPoint =  new Test().testExecute(adventureMap, startingPoint, item);
+                System.out.println("\tfound " + item + " in the " + startingPoint.getName());
+            }
+
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new IllegalStateException("Could not parse " + appArgs.map, e);
         }
 
     }
 
+    private static class Test {
+        private List<RoomNode> nodes;
+        private List<Edge> edges;
 
+        RoomNode testExecute(AdventureMap adventureMap, RoomNode startingPoint, String itemToFind) {
+
+            RoomNode roomThatContains = adventureMap.getRoomThatContains(itemToFind);
+            nodes = new ArrayList<>(adventureMap.getRoomsById().values());
+            edges = new ArrayList<Edge>();
+
+            for (RoomNode roomNode : nodes) {
+                edges.addAll(roomNode.getEdges(adventureMap.getRoomsById()));
+            }
+
+            Graph graph = new Graph(nodes, edges);
+            DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph);
+            dijkstra.execute(startingPoint);
+            LinkedList<Vertex> path = dijkstra.getPath(roomThatContains);
+
+            System.out.println("Starting from " + startingPoint.getName() + " the path to the " + itemToFind + " is ");
+            for (Vertex vertex : path) {
+                RoomNode x = adventureMap.getRoomsById().get(vertex.getId());
+                System.out.println(x.getName());
+            }
+            return (RoomNode) path.getLast();
+        }
+
+
+    }
 }
 
