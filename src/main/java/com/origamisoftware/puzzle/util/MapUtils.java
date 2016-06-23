@@ -73,7 +73,6 @@ public class MapUtils {
      * @param itemsToFind
      * @return
      */
-
     public static List<RouteSegment> findItems(Map<String, RoomNode> roomsById, RoomNode startingPoint,
                                                List<String> itemsToFind, Map<String, RoomNode> roomsByContents) {
 
@@ -116,6 +115,40 @@ public class MapUtils {
         }
         return path;
     }
+
+
+    // bsf
+    public static boolean  findPathTo(RoomNode startingNode, Map<String, RoomNode> roomsById, String item, List<RoomNode> path) {
+
+        Queue<RoomNode> queue = new LinkedList<RoomNode>();
+        startingNode.visited = true;
+        queue.add(startingNode);
+
+        System.out.println(startingNode.getName());
+
+
+        while (!queue.isEmpty()) {
+            RoomNode v = queue.poll();
+            if (v.getContents().equals(item)) {
+                path.add(v);
+                return true;
+            }
+            for (String roomId : v.neighbors.values()) {
+                RoomNode w = roomsById.get(roomId);
+                if (!w.visited) {
+                    System.out.println(w.getName());
+                    path.add(v);
+                    w.visited = true;
+                    queue.add(w);
+                }
+                System.out.println(v.getName());
+
+            }
+        }
+        return false;
+    }
+
+
 
     public static RoomNode findShortestPath(AdventureMap adventureMap, RoomNode startingPoint, String itemToFind) {
 

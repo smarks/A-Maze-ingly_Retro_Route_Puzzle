@@ -1,8 +1,6 @@
 package com.origamisoftware.puzzle;
 
-import com.origamisoftware.puzzle.model.AdventureMap;
 import com.origamisoftware.puzzle.model.RoomNode;
-import com.origamisoftware.puzzle.model.RouteSegment;
 import com.origamisoftware.puzzle.util.MapUtils;
 import com.origamisoftware.puzzle.util.XMLUtils;
 import org.kohsuke.args4j.CmdLineException;
@@ -14,6 +12,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,14 +84,19 @@ public class FindRouteApplication {
             List<String> itemsToFind = scenario.subList(1, scenario.size());
             Map<String, RoomNode> roomByContents = new HashMap<>();
 
-
-            List<RouteSegment> path = MapUtils.findItems(roomsById, startingPoint, itemsToFind, roomByContents);
-
-            System.out.println("Start in the " + startingPoint.getName());
+      //      List<RouteSegment> path = MapUtils.findItems(roomsById, startingPoint, itemsToFind, roomByContents);
+             /* System.out.println("Start in the " + startingPoint.getName());
             for (RouteSegment routeSegment : path) {
                 System.out.println(routeSegment.toString());
             }
+            */
+            List<RoomNode> track = new ArrayList<>();
+            boolean pathTo = MapUtils.findPathTo(startingPoint, roomsById, itemsToFind.get(0), track);
+            System.out.println(">>>> Found: " + pathTo);
 
+
+
+/*
             AdventureMap adventureMap = new AdventureMap(roomsById, roomByContents);
 
             for (String item : itemsToFind) {
@@ -100,7 +104,7 @@ public class FindRouteApplication {
                 startingPoint = MapUtils.findShortestPath(adventureMap,startingPoint,item);
                 System.out.println("\tfound " + item + " in the " + startingPoint.getName());
             }
-
+*/
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new IllegalStateException("Could not parse " + appArgs.map, e);
         }
