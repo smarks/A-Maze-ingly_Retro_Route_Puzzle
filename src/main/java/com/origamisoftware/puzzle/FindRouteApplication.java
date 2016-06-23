@@ -1,5 +1,6 @@
 package com.origamisoftware.puzzle;
 
+import com.origamisoftware.puzzle.model.AdventureMap;
 import com.origamisoftware.puzzle.model.RoomNode;
 import com.origamisoftware.puzzle.util.MapUtils;
 import com.origamisoftware.puzzle.util.XMLUtils;
@@ -82,29 +83,27 @@ public class FindRouteApplication {
 
             RoomNode startingPoint = roomsById.get(scenario.get(0));
             List<String> itemsToFind = scenario.subList(1, scenario.size());
-            Map<String, RoomNode> roomByContents = new HashMap<>();
 
-      //      List<RouteSegment> path = MapUtils.findItems(roomsById, startingPoint, itemsToFind, roomByContents);
-             /* System.out.println("Start in the " + startingPoint.getName());
+            /*
+            Map<String, RoomNode> roomByContents = new HashMap<>();
+            List<RouteSegment> path = MapUtils.findItems(roomsById, startingPoint, itemsToFind, roomByContents);
+            System.out.println("Start in the " + startingPoint.getName());
             for (RouteSegment routeSegment : path) {
                 System.out.println(routeSegment.toString());
             }
-            */
-            List<RoomNode> track = new ArrayList<>();
-            boolean pathTo = MapUtils.findPathTo(startingPoint, roomsById, itemsToFind.get(0), track);
-            System.out.println(">>>> Found: " + pathTo);
-
-
-
-/*
-            AdventureMap adventureMap = new AdventureMap(roomsById, roomByContents);
-
-            for (String item : itemsToFind) {
-                //startingPoint = new Test().testExecute(adventureMap, startingPoint, item);
-                startingPoint = MapUtils.findShortestPath(adventureMap,startingPoint,item);
-                System.out.println("\tfound " + item + " in the " + startingPoint.getName());
-            }
 */
+            Map<String, RoomNode> roomByContents = new HashMap<>();
+
+            List<RoomNode> track = new ArrayList<>();
+            boolean pathTo = MapUtils.findPathTo(startingPoint, roomsById, itemsToFind, roomByContents);
+
+            AdventureMap adventureMap = new AdventureMap(roomsById, roomByContents);
+            itemsToFind = scenario.subList(1, scenario.size());
+            for (String item : itemsToFind) {
+                startingPoint = MapUtils.findShortestPath(adventureMap,startingPoint,item);
+                System.out.println("I collect the " + item );
+            }
+
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new IllegalStateException("Could not parse " + appArgs.map, e);
         }

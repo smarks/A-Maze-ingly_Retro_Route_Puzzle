@@ -86,6 +86,7 @@ public class MapUtils {
         while (!queue.isEmpty()) {
 
             RoomNode roomNode = queue.poll();
+            path.add(new RouteSegment(CardinalPoint.EAST, roomNode));
 
             if (itemsToFind.contains(roomNode.getContents())) {
                 roomsByContents.put(roomNode.getContents(), roomNode);
@@ -108,6 +109,7 @@ public class MapUtils {
                     System.out.println(e.toString());
                     path.add(e);
                 }
+                path.add(new RouteSegment(direction.getOpposite(), roomNode));
 
 
             });
@@ -118,37 +120,49 @@ public class MapUtils {
 
 
     // bsf
-    public static boolean  findPathTo(RoomNode startingNode, Map<String, RoomNode> roomsById, String item, List<RoomNode> path) {
+    public static boolean findPathTo(RoomNode startingNode, Map<String, RoomNode> roomsById, List<String> items,
+                                     Map<String, RoomNode> roomsByContents) {
 
-        Queue<RoomNode> queue = new LinkedList<RoomNode>();
+        Queue<Edge> queue = new LinkedList<>();
+
         startingNode.visited = true;
-        queue.add(startingNode);
+        // String id, RoomNode source, RoomNode destination, String directionFromSource
 
-        System.out.println(startingNode.getName());
-
+        queue.add(new Edge("Starting", startingNode, startingNode, null));
 
         while (!queue.isEmpty()) {
-            RoomNode v = queue.poll();
-            if (v.getContents().equals(item)) {
-                path.add(v);
+
+            Edge currentEdge = queue.poll();
+
+            RoomNode currentRoom = currentEdge.getDestination();
+
+            //  System.out.println("In the " + currentRoom.getName());
+
+            String contents = currentRoom.getContents();
+            if (items.contains(contents)) {
+                roomsByContents.put(contents, currentRoom);
+                System.out.println("I collect the: " + contents);
+            }
+
+            if (items.size() == roomsByContents.size()) {
                 return true;
             }
-            for (String roomId : v.neighbors.values()) {
-                RoomNode w = roomsById.get(roomId);
-                if (!w.visited) {
-                    System.out.println(w.getName());
-                    path.add(v);
-                    w.visited = true;
-                    queue.add(w);
-                }
-                System.out.println(v.getName());
 
+            List<Edge> edges = currentRoom.getEdges(roomsById);
+
+            for (Edge edge : edges) {
+                // visit each adjoining node
+                RoomNode neighbor = edge.getDestination();
+                if (!neighbor.visited) {
+                    neighbor.visited = true;
+                    queue.add(edge);
+
+                }
             }
+
         }
         return false;
     }
-
-
 
     public static RoomNode findShortestPath(AdventureMap adventureMap, RoomNode startingPoint, String itemToFind) {
 
@@ -165,11 +179,31 @@ public class MapUtils {
         dijkstra.execute(startingPoint);
         LinkedList<Vertex> path = dijkstra.getPath(roomThatContains);
 
-        System.out.println("Starting from " + startingPoint.getName() + " the path to the " + itemToFind + " is ");
-        for (Vertex vertex : path) {
-            RoomNode x = adventureMap.getRoomsById().get(vertex.getId());
-            System.out.println(x.getName());
+        //System.out.println("Starting from " + startingPoint.getName() + " the path to the " + itemToFind + " is ");
+
+        int size = path.size();
+        for (int index = 0; index < size; index++) {
+            Vertex vertex = path.get(index);
+            RoomNode roomNode = adventureMap.getRoomsById().get(vertex.getId());
+            System.out.println("In the " + roomNode.getName());
+            if (path.size() != index + 1) {
+                vertex = path.get(index + 1);
+                RoomNode nextRoom = adventureMap.getRoomsById().get(vertex.getId());
+                System.out.println("I go " + roomNode.whichWayIsThisRoom(nextRoom).toString().toLowerCase());
+            }
         }
+/*
+        for (Vertex vertex : path) {
+
+            RoomNode x = adventureMap.getRoomsById().get(vertex.getId());
+            if (path.p) {
+                System.out.println("In the " + x.getName());
+            }
+
+            //  System.out.println(x.getName());
+
+        }
+*/
         return (RoomNode) path.getLast();
     }
 

@@ -93,6 +93,16 @@ public class RoomNode implements Vertex {
         return true;
     }
 
+    public CardinalPoint whichWayIsThisRoom(RoomNode roomNode) {
+
+        for (CardinalPoint key : neighbors.keySet()) {
+            if (neighbors.get(key).equals(roomNode.getId())) {
+                return key;
+            }
+        }
+        throw new IllegalStateException("This room: " + roomNode.getName() + " is not adjacent to " + this.getName());
+    }
+
     @Override
     public String getId() {
         return id;
