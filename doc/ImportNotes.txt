@@ -1,1 +1,60 @@
-The provided sc
+While I approaching this problem I struggled with whether it was a
+search a graph problem or a find the shortest path in a graph problem.
+
+In short, "Do I have to find the optimal route or simply a valid route?" But I knew asking the question was not a
+great idea.
+
+
+When I looked at the example output:
+
+ID  Room          Object collected
+----------------------------------
+2   Dining Room   None
+1   Hallway       None
+2   Dining Room   None
+3   Kitchen       Knife
+2   Dining Room   None
+4   Sun Room      Potted Plant
+
+I saw that, it really looked like a search problem since Dining room is entered twice before the knife is found.
+That is not optimal route.
+
+Still, optimal can't be bad. So, I actually solved the puzzle two ways.
+
+First,I read in the XML using the DTD to validate the XML.
+I used a org.w3c.dom.Document and the supporting classes that are part of the JDK to do that.
+I did have a slight preference for using JAXB for parsing of the XML because it would make
+mapping the XML to Java classes more straight forward, but that would require creating a XSD from the DTD
+and using it to validate the XML instead of the DTD. But after coding it up that way, I decided that approach was out
+of bounds and stuck with the 'older school' approach. Both approaches work fine.
+
+Once the map.xml is in the org.w3c.dom.Document, I convert the org.w3c.dom.Nodes into a model that allows me to work
+more easily with graph algorithms as well as provide the turn by turn functionality required in the final output.
+
+When I am done iterating over the org.w3c.dom.Document, I have produced a HashMap whose key is the room id from the XML
+and whose value is a RoomNode (Vertex). The RoomNode has all the attributes contained in the XML. It contains
+a list of its' adjacent rooms (annotated with the direction) as well as a list of Edge objects. The adjacent rooms
+are for Breath First Searching while the Edges are used to find the shortest path. I probably don't need both
+structures in the RoomNode but it made it easier.
+
+[ On possible optimization might be to use org.w3c.dom.Nodes directly
+without the conversion, but I preferred to model the solution a bit more literally. Also, the model decouples the native
+data types (the org.w3c.dom.Nodes)  from how the data is being used in the program.
+This means if I wanted to go back adn use a different parsing approach I would not be stuck having to change the
+org.w3c.dom.Nodes everywhere they where used. I treat the org.w3c.dom.Nodes almost as DataTransferObject.
+Find, I find the org.w3c.dom.Nodes API pretty cumbersome. All this lead me to do the convesion.
+That said, if I had used the JAXB approach it would have been much easier to treat the JAXB classes as both DTOs and Graph Nodes.
+If it wasn't for the DTD constraint, that might have been the most direct course for this particular problem. ]
+
+When I created the HashMap of rooms by id, I could have easily also created a HashMap whose value is the object in a room and
+whose key is the room. From there, I could use Dijkstra's Algorithm to find the shortest path for each item (starting from where
+I found the previous item). However, if I did that it would not match the sample output which clearly has some dead ends.
+As a result, generating this data while parsing the XML felt a little like cheating to me. Instead, I create the same
+HashMap using a BSF. As I create that HashMap, I find all the objects. When I do this,
+I am not finding the objects in the same order as they are listed in the scenario file, but that does not seem to be
+a stated requirement of the exercise: " each subsequent line lists the name of an object they must collect" The collection
+order is not stated as a requirement. So a Breadth First Search of all the nodes solves the problem. (A Depth First Search would too).
+
+But once the location of the items are known, Dijkstra's Algorithm can be used to find the shortest path between each.
+So once I do the BSF I create a HashMap where the key is the item, and the value is the room. I then use this map
+to find the shortest path.

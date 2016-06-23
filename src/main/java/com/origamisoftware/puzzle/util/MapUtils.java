@@ -1,15 +1,24 @@
 package com.origamisoftware.puzzle.util;
 
 import com.origamisoftware.puzzle.model.AdventureMap;
-import com.origamisoftware.puzzle.model.LinkDirections;
+import com.origamisoftware.puzzle.model.CardinalPoint;
+import com.origamisoftware.puzzle.model.DijkstraAlgorithm;
+import com.origamisoftware.puzzle.model.Edge;
+import com.origamisoftware.puzzle.model.Graph;
 import com.origamisoftware.puzzle.model.RoomNode;
+import com.origamisoftware.puzzle.model.RouteSegment;
+import com.origamisoftware.puzzle.model.Vertex;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 /**
  * Utilities for creating a map model from the XML data.
@@ -31,7 +40,7 @@ public class MapUtils {
      * @param document the XML document
      * @return a Map where the key is the room id and the value which maps to a RoomNode.
      */
-    public static AdventureMap buildMapModelFromDocument(Document document) {
+    public static Map<String, RoomNode> buildMapModelFromDocument(Document document) {
 
         NodeList rooms = document.getElementsByTagName(XML_TAG_NAME_FOR_ROOM);
 
@@ -50,8 +59,87 @@ public class MapUtils {
             node2RoomNode(roomMapById, rooms.item(index));
         }
 
-        return new AdventureMap(roomMapById,entryPoint);
+        return roomMapById;
     }
+
+    /**
+     * Given an AdventureMap which contains both the entire map of rooms (or graph) and the starting point (initial node),
+     * look in all the rooms (nodes) and if they contain an item in the itemsToFind set, record the roomNode and
+     * it's contents in a Map. When all the rooms have been searched (all the nodes visited via BSF) return the
+     * Map.
+     *
+     * @param roomsById
+     * @param startingPoint
+     * @param itemsToFind
+     * @return
+     */
+
+    public static List<RouteSegment> findItems(Map<String, RoomNode> roomsById, RoomNode startingPoint,
+                                               List<String> itemsToFind, Map<String, RoomNode> roomsByContents) {
+
+        List<RouteSegment> path = new ArrayList<>();
+        Queue<RoomNode> queue = new LinkedList<RoomNode>();
+
+        startingPoint.visited = true;
+
+        queue.add(startingPoint);
+
+        while (!queue.isEmpty()) {
+
+            RoomNode roomNode = queue.poll();
+
+            if (itemsToFind.contains(roomNode.getContents())) {
+                roomsByContents.put(roomNode.getContents(), roomNode);
+                if (itemsToFind.size() == roomsByContents.size()) {
+                    return path;
+                }
+            }
+
+            Map<CardinalPoint, String> neighbors = roomNode.getNeighbors();
+
+            // visit each adjoining node
+            neighbors.forEach((direction, roomId) -> {
+
+                RoomNode neighbor = roomsById.get(roomId);
+
+                if (!neighbor.visited) {
+                    neighbor.visited = true;
+                    queue.add(neighbor);
+                    RouteSegment e = new RouteSegment(direction, neighbor);
+                    System.out.println(e.toString());
+                    path.add(e);
+                }
+
+
+            });
+
+        }
+        return path;
+    }
+
+    public static RoomNode findShortestPath(AdventureMap adventureMap, RoomNode startingPoint, String itemToFind) {
+
+        RoomNode roomThatContains = adventureMap.getRoomThatContains(itemToFind);
+        List<RoomNode> nodes = new ArrayList<>(adventureMap.getRoomsById().values());
+        List<Edge> edges = new ArrayList<Edge>();
+
+        for (RoomNode roomNode : nodes) {
+            edges.addAll(roomNode.getEdges(adventureMap.getRoomsById()));
+        }
+
+        Graph graph = new Graph(nodes, edges);
+        DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph);
+        dijkstra.execute(startingPoint);
+        LinkedList<Vertex> path = dijkstra.getPath(roomThatContains);
+
+        System.out.println("Starting from " + startingPoint.getName() + " the path to the " + itemToFind + " is ");
+        for (Vertex vertex : path) {
+            RoomNode x = adventureMap.getRoomsById().get(vertex.getId());
+            System.out.println(x.getName());
+        }
+        return (RoomNode) path.getLast();
+    }
+
 
     private static RoomNode node2RoomNode(Map<String, RoomNode> roomMapById, Node node) {
 
@@ -62,13 +150,13 @@ public class MapUtils {
         RoomNode roomNode = new RoomNode(roomName, roomId);
         roomMapById.put(roomId, roomNode);
 
-        for (LinkDirections linkDirection : LinkDirections.values()) {
+        for (CardinalPoint linkDirection : CardinalPoint.values()) {
             String linkId = getAttributeValueOrNull(attributes, linkDirection.getXmlName());
 
             // lots of rooms won't have a link for each direction, that's OK
             if (linkId != null) {
                 // create an edge between current room and room being pointed to.
-                roomNode.addNeighbor(linkId, linkDirection);
+                roomNode.addEdge(linkId, linkDirection);
             }
         }
 

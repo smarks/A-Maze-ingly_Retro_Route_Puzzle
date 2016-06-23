@@ -9,12 +9,14 @@ public class Edge  {
     private final RoomNode source;
     private final RoomNode destination;
     private final int weight;
+    private final String directionFromSource;
 
-    public Edge(String id, RoomNode source, RoomNode destination) {
+    public Edge(String id, RoomNode source, RoomNode destination, String directionFromSource) {
         this.id = id;
         this.source = source;
         this.destination = destination;
         this.weight = 1;
+        this.directionFromSource = directionFromSource;
     }
 
     public String getId() {
@@ -31,10 +33,13 @@ public class Edge  {
         return weight;
     }
 
-    @Override
-    public String toString() {
-        return source + " " + destination;
+    public String getDirectionFromSource() {
+        return directionFromSource;
     }
 
-
+    @Override
+    public String toString() {
+        return "Edge{" + "id='" + id + '\'' + ", source=" + source + ", destination=" + destination + ", weight=" +
+                weight + ", directionFromSource='" + directionFromSource + '\'' + '}';
+    }
 }
