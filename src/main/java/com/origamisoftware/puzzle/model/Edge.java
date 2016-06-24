@@ -1,27 +1,42 @@
 package com.origamisoftware.puzzle.model;
 
 /**
- *
- */
-public class Edge  {
+ * A Edge models 'the line' between to nodes in a graph.
+ **/
+public class Edge {
 
-    private final String id;
+    /**
+     * The staring point
+     */
     private final RoomNode source;
-    private final RoomNode destination;
-    private final int weight;
-    private final String directionFromSource;
 
-    public Edge(String id, RoomNode source, RoomNode destination, String directionFromSource) {
-        this.id = id;
+    /**
+     * The end point
+     */
+    private final RoomNode destination;
+
+    /**
+     * In some graphs (in some use cases) Edges can have a different weights associated with each one.
+     * E.g. a weighted graph
+     * Our use case does not require varying weight edges. That is, while our graph is technically weighted
+     * all of them have a weight of one. We use a weighted graph because Dijkstra's shortest path Algorithm
+     * (which we use in this program) uses the weight value of edges.
+     * However, for our use, this value never varies
+     */
+    private final static int weight = 1;
+
+    /**
+     * The cardinal direction from the source to the destination.
+     */
+    private final CardinalPoint directionFromSource;
+
+    public Edge(RoomNode source, RoomNode destination, CardinalPoint directionFromSource) {
         this.source = source;
         this.destination = destination;
-        this.weight = 1;
         this.directionFromSource = directionFromSource;
     }
 
-    public String getId() {
-        return id;
-    }
+
     public RoomNode getDestination() {
         return destination;
     }
@@ -29,17 +44,18 @@ public class Edge  {
     public RoomNode getSource() {
         return source;
     }
-    public int getWeight() {
+
+    int getWeight() {
         return weight;
     }
 
-    public String getDirectionFromSource() {
+    public CardinalPoint getDirectionFromSource() {
         return directionFromSource;
     }
 
     @Override
     public String toString() {
-        return "Edge{" + "id='" + id + '\'' + ", source=" + source + ", destination=" + destination + ", weight=" +
-                weight + ", directionFromSource='" + directionFromSource + '\'' + '}';
+        return "Edge{" + "source=" + source + ", destination=" + destination + ", weight=" + weight +
+                ", directionFromSource='" + directionFromSource + '\'' + '}';
     }
 }

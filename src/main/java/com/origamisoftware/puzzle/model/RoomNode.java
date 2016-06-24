@@ -6,13 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Models a room on the map.
- * A list of Edge objects provide this room's connections to other rooms.
- * If a
+ * The RoomNode is a specific implementation the serves the function as a node or vertex in
+ * in graph algorithms while also modeling a room in the adventurer's map.
+ *
+ * A RoomNode contains a list of adjacent rooms modeled as Edges.
+ * A RoomNode may have contents (e.g. a plate, if not, it's contents will be labeled as RoomNode.NO_CONTENTS)
+ *
  */
 public class RoomNode implements Vertex {
 
-    public final static String NO_CONTENTS = "empty";
+     final static String NO_CONTENTS = "empty";
 
     /**
      * Adjacent Nodes
@@ -44,7 +47,7 @@ public class RoomNode implements Vertex {
 
         for (CardinalPoint directionLabel : neighbors.keySet()) {
             RoomNode destination = roomsById.get(neighbors.get(directionLabel));
-            Edge edge = new Edge(name + ":" + destination.getName(), this, destination, directionLabel.getXmlName());
+            Edge edge = new Edge(this, destination, directionLabel);
             edges.add(edge);
         }
         return edges;

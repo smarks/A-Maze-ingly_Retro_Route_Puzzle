@@ -21,14 +21,11 @@ import java.util.Map;
 import java.util.Queue;
 
 /**
- * Utilities for creating a map model from the XML data.
+ * Utilities for creating a map model from the XML data and navigating that map.
  */
 public class MapUtils {
 
-    /**
-     * Each node can have a link in any of the for cardinal directions
-     */
-
+    // these XML element attribute names. If the XML changes these would have to change as well.
     final private static String XML_TAG_NAME_FOR_ROOM = "room";
     final private static String XML_ROOM_ATTRIBUTE_NAME_FOR_ID = "id";
     final private static String XML_ROOM_ATTRIBUTE_KEY_FOR_ROOM_NAME = "name";
@@ -128,7 +125,7 @@ public class MapUtils {
         startingNode.visited = true;
         // String id, RoomNode source, RoomNode destination, String directionFromSource
 
-        queue.add(new Edge("Starting", startingNode, startingNode, null));
+        queue.add(new Edge(startingNode, startingNode, null));
 
         while (!queue.isEmpty()) {
 
@@ -164,8 +161,19 @@ public class MapUtils {
         return false;
     }
 
-    public static RoomNode findShortestPath(AdventureMap adventureMap, RoomNode startingPoint, String itemToFind) {
+    /**
+     * Find the shortest path to the room that contains the specified item and returns the list of nodes
+     * starting from the specified starting node leading to the room with the item in it.
+     *
+     * @param adventureMap
+     * @param startingPoint
+     * @param itemToFind
+     * @return a list of rooms, the last room in the list will be the room where the item was found.
+     * and empty list means the item was not found.
+     */
+    public static List<RoomNode> findShortestPath(AdventureMap adventureMap, RoomNode startingPoint, String itemToFind) {
 
+        List<RoomNode> rooms = new ArrayList<>();
         RoomNode roomThatContains = adventureMap.getRoomThatContains(itemToFind);
         List<RoomNode> nodes = new ArrayList<>(adventureMap.getRoomsById().values());
         List<Edge> edges = new ArrayList<Edge>();
@@ -179,12 +187,11 @@ public class MapUtils {
         dijkstra.execute(startingPoint);
         LinkedList<Vertex> path = dijkstra.getPath(roomThatContains);
 
-        //System.out.println("Starting from " + startingPoint.getName() + " the path to the " + itemToFind + " is ");
-
-        int size = path.size();
-        for (int index = 0; index < size; index++) {
+        int numberOfRooms = path.size();
+        for (int index = 0; index < numberOfRooms; index++) {
             Vertex vertex = path.get(index);
             RoomNode roomNode = adventureMap.getRoomsById().get(vertex.getId());
+            rooms.add(roomNode);
             System.out.println("In the " + roomNode.getName());
             if (path.size() != index + 1) {
                 vertex = path.get(index + 1);
@@ -192,19 +199,8 @@ public class MapUtils {
                 System.out.println("I go " + roomNode.whichWayIsThisRoom(nextRoom).toString().toLowerCase());
             }
         }
-/*
-        for (Vertex vertex : path) {
 
-            RoomNode x = adventureMap.getRoomsById().get(vertex.getId());
-            if (path.p) {
-                System.out.println("In the " + x.getName());
-            }
-
-            //  System.out.println(x.getName());
-
-        }
-*/
-        return (RoomNode) path.getLast();
+        return rooms;
     }
 
 

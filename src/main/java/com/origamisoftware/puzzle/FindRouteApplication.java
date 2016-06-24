@@ -78,29 +78,28 @@ public class FindRouteApplication {
         }
 
         try {
+
             List<String> scenario = Files.readAllLines(Paths.get((appArgs.scenario)));
+
+            // parse the XML and return a map where the keys are the room ids the value is a RoomNode (or vertex).
             Map<String, RoomNode> roomsById = MapUtils.buildMapModelFromDocument(XMLUtils.parseXML(appArgs.map));
 
+            // the first line in the scenario is the starting point, the remains lines are items to find.
             RoomNode startingPoint = roomsById.get(scenario.get(0));
             List<String> itemsToFind = scenario.subList(1, scenario.size());
 
-            /*
-            Map<String, RoomNode> roomByContents = new HashMap<>();
-            List<RouteSegment> path = MapUtils.findItems(roomsById, startingPoint, itemsToFind, roomByContents);
-            System.out.println("Start in the " + startingPoint.getName());
-            for (RouteSegment routeSegment : path) {
-                System.out.println(routeSegment.toString());
-            }
-*/
             Map<String, RoomNode> roomByContents = new HashMap<>();
 
-            List<RoomNode> track = new ArrayList<>();
-            boolean pathTo = MapUtils.findPathTo(startingPoint, roomsById, itemsToFind, roomByContents);
+            // find all the items in the all the rooms, populating roomByContents
+            MapUtils.findPathTo(startingPoint, roomsById, itemsToFind, roomByContents);
 
+            // find the shortest path to each item, one item at a time from the room the last item was found it.
             AdventureMap adventureMap = new AdventureMap(roomsById, roomByContents);
-            itemsToFind = scenario.subList(1, scenario.size());
+
+            List<RoomNode> rooms = new ArrayList<>();
+            rooms.add(startingPoint);
             for (String item : itemsToFind) {
-                startingPoint = MapUtils.findShortestPath(adventureMap,startingPoint,item);
+                rooms   = MapUtils.findShortestPath(adventureMap, rooms.get(rooms.size() - 1),item);
                 System.out.println("I collect the " + item );
             }
 
