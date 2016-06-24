@@ -16,13 +16,13 @@ public interface Vertex {
      * A unique id for the Vertex
      * @return a String value
      */
-    public String getId();
+    String getId();
 
     /**
      * A label for the Vertex. It does not have to be unique.
      * @return a String value.
      */
-    public String getName();
+    String getName();
 
 
 }

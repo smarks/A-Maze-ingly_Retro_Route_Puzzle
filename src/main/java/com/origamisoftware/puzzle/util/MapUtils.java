@@ -7,7 +7,6 @@ import com.origamisoftware.puzzle.model.DijkstraAlgorithm;
 import com.origamisoftware.puzzle.model.Edge;
 import com.origamisoftware.puzzle.model.Graph;
 import com.origamisoftware.puzzle.model.RoomNode;
-import com.origamisoftware.puzzle.model.RouteSegment;
 import com.origamisoftware.puzzle.model.Vertex;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -19,7 +18,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 /**
  * Utilities for creating a map model from the XML data and navigating that map.
@@ -50,7 +48,7 @@ public class MapUtils {
         Map<String, RoomNode> roomMapById = new HashMap<>(count);
 
         // assume the first room in the map.xml is the starting point
-        RoomNode entryPoint = node2RoomNode(roomMapById, rooms.item(0));
+         node2RoomNode(roomMapById, rooms.item(0));
 
         // we already have the first room (0) now get every room element in the xml and create a roomNode for them.
         for (int index = 1; index < count; index++) {
@@ -58,112 +56,6 @@ public class MapUtils {
         }
 
         return roomMapById;
-    }
-
-    /**
-     * Given an AdventureMap which contains both the entire map of rooms (or graph) and the starting point (initial node),
-     * look in all the rooms (nodes) and if they contain an item in the itemsToFind set, record the roomNode and
-     * it's contents in a Map. When all the rooms have been searched (all the nodes visited via BSF) return the
-     * Map.
-     *
-     * @param roomsById
-     * @param startingPoint
-     * @param itemsToFind
-     * @return
-     */
-    public static List<RouteSegment> findItems(Map<String, RoomNode> roomsById, RoomNode startingPoint,
-                                               List<String> itemsToFind, Map<String, RoomNode> roomsByContents) {
-
-
-        List<RouteSegment> path = new ArrayList<>();
-        Queue<RoomNode> queue = new LinkedList<RoomNode>();
-
-        startingPoint.visited = true;
-
-        queue.add(startingPoint);
-
-        while (!queue.isEmpty()) {
-
-            RoomNode roomNode = queue.poll();
-            path.add(new RouteSegment(CardinalPoint.EAST, roomNode));
-
-            if (itemsToFind.contains(roomNode.getContents())) {
-                roomsByContents.put(roomNode.getContents(), roomNode);
-                if (itemsToFind.size() == roomsByContents.size()) {
-                    return path;
-                }
-            }
-
-            Map<CardinalPoint, String> neighbors = roomNode.getNeighbors();
-
-            // visit each adjoining node
-            neighbors.forEach((direction, roomId) -> {
-
-                RoomNode neighbor = roomsById.get(roomId);
-
-                if (!neighbor.visited) {
-                    neighbor.visited = true;
-                    queue.add(neighbor);
-                    RouteSegment e = new RouteSegment(direction, neighbor);
-                    System.out.println(e.toString());
-                    path.add(e);
-                }
-                path.add(new RouteSegment(direction.getOpposite(), roomNode));
-
-
-            });
-
-        }
-        return path;
-    }
-
-
-
-
-    // bsf
-
-    public static boolean findPathTo(RoomNode startingNode, Map<String, RoomNode> roomsById, List<String> items,
-                                     Map<String, RoomNode> roomsByContents) {
-
-        Queue<Edge> queue = new LinkedList<>();
-
-        startingNode.visited = true;
-        // String id, RoomNode source, RoomNode destination, String directionFromSource
-
-        queue.add(new Edge(startingNode, startingNode, null));
-
-        while (!queue.isEmpty()) {
-
-            Edge currentEdge = queue.poll();
-
-            RoomNode currentRoom = currentEdge.getDestination();
-
-            //  System.out.println("In the " + currentRoom.getName());
-
-            String contents = currentRoom.getContents();
-            if (items.contains(contents)) {
-                roomsByContents.put(contents, currentRoom);
-                System.out.println("I collect the: " + contents);
-            }
-
-            if (items.size() == roomsByContents.size()) {
-                return true;
-            }
-
-            List<Edge> edges = currentRoom.getEdges(roomsById);
-
-            for (Edge edge : edges) {
-                // visit each adjoining node
-                RoomNode neighbor = edge.getDestination();
-                if (!neighbor.visited) {
-                    neighbor.visited = true;
-                    queue.add(edge);
-
-                }
-            }
-
-        }
-        return false;
     }
 
     /**
@@ -182,7 +74,7 @@ public class MapUtils {
         List<RoomNode> rooms = new ArrayList<>();
         RoomNode roomThatContains = adventureMap.getRoomThatContains(itemToFind);
         List<RoomNode> nodes = new ArrayList<>(adventureMap.getRoomsById().values());
-        List<Edge> edges = new ArrayList<Edge>();
+        List<Edge> edges = new ArrayList<>();
 
         for (RoomNode roomNode : nodes) {
             edges.addAll(roomNode.getEdges(adventureMap.getRoomsById()));
@@ -229,12 +121,12 @@ public class MapUtils {
             }
         }
 
-        populateRoomContents(node, roomName, roomNode);
+        populateRoomContents(node, roomNode);
 
         return roomNode;
     }
 
-    private static void populateRoomContents(Node node, String roomName, RoomNode roomNode) {
+    private static void populateRoomContents(Node node, RoomNode roomNode) {
 
         // the XML node will have child nodes if it has Object element which holds the room's contents.
         if (node.hasChildNodes()) {

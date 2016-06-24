@@ -8,8 +8,8 @@ import java.util.Map;
  */
 public class AdventureMap {
 
-    private Map<String, RoomNode> roomsById;
-    private Map<String, RoomNode> roomContentsByItem;
+    private final Map<String, RoomNode> roomsById;
+    private final Map<String, RoomNode> roomContentsByItem;
 
 
     /**

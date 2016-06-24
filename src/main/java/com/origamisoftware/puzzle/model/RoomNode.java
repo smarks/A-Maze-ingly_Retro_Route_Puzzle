@@ -27,7 +27,7 @@ public class RoomNode implements Vertex {
     /**
      * Adjacent Nodes
      */
-    public Map<CardinalPoint, String> neighbors = new HashMap<>();
+    public final Map<CardinalPoint, String> neighbors = new HashMap<>();
 
     /**
      * Contents of the room
@@ -36,8 +36,8 @@ public class RoomNode implements Vertex {
 
     public boolean visited;
 
-    private String id;
-    private String name;
+    private final String id;
+    private final String name;
 
     public RoomNode(String name, String id) {
         this.name = name;

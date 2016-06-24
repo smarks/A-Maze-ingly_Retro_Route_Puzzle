@@ -8,11 +8,11 @@ import java.util.Set;
 
 public class DepthFirstSearch {
 
-    private Set<RoomNode> visited;
+    private final Set<RoomNode> visited;
 
     private int count;           // number of vertices connected to s
-    private List<String> itemsToFind;
-    private Map<String, RoomNode> roomByContents;
+    private final List<String> itemsToFind;
+    private final Map<String, RoomNode> roomByContents;
 
     /**
      * Computes the vertices in graph <tt>G</tt> that are
@@ -68,11 +68,4 @@ public class DepthFirstSearch {
         return count;
     }
 
-    /**
-     * Unit tests the <tt>DepthFirstSearch</tt> data type.
-     */
-    public static void main(String[] args) {
-
-
-    }
 }

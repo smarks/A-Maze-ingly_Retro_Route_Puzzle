@@ -7,7 +7,7 @@ public enum CardinalPoint {
 
     NORTH("north"), SOUTH("south"), EAST("east"), WEST("west");
 
-    private String xmlName;
+    private final String xmlName;
 
     CardinalPoint(String xmlName) {
         this.xmlName = xmlName;

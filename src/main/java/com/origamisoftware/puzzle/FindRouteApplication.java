@@ -27,7 +27,7 @@ import java.util.Map;
  *
  * @author <a href="mailto:smarks@origamisoftware.com"></a>
  */
-public class FindRouteApplication {
+class FindRouteApplication {
 
 
     /**
@@ -48,7 +48,7 @@ public class FindRouteApplication {
      * @param code the exit value to pass to the caller. 0 denotes normal termination. Anything else
      *             denotes an error.
      */
-    public static void exit(int code) {
+    private static void exit(int code) {
         System.exit(code);
     }
 
@@ -97,7 +97,7 @@ public class FindRouteApplication {
             // find the shortest path to each item, one item at a time from the room the last item was found it.
             AdventureMap adventureMap = new AdventureMap(roomsById, roomByContents);
 
-            System.out.println("Find Each item from the previous room the fastest.");
+            System.out.println("\n\nFind Each item from starting from previous room the fastest.\n\n");
             List<RoomNode> rooms = new ArrayList<>();
 
             rooms.add(startingPoint);
