@@ -19,6 +19,8 @@ import java.util.List;
 @Immutable
 public class Graph {
 
+    int numberOfVertexes;
+
     /**
      * All the vertexes in the graph
      */
@@ -38,6 +40,7 @@ public class Graph {
     public Graph(List<RoomNode> vertexes, List<Edge> edges) {
         this.vertexes = vertexes;
         this.edges = edges;
+        this.numberOfVertexes = vertexes.size();
     }
 
     /**
@@ -55,6 +58,7 @@ public class Graph {
     List<Edge> getEdges() {
         return edges;
     }
+
 
 
 }

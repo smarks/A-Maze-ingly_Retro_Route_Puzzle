@@ -1,6 +1,7 @@
 package com.origamisoftware.puzzle.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,12 @@ import java.util.Map;
 public class RoomNode implements Vertex {
 
      final static String NO_CONTENTS = "empty";
+
+
+
+    public int getNumberOfChildren() {
+        return neighbors.size();
+    }
 
     /**
      * Adjacent Nodes
@@ -95,7 +102,15 @@ public class RoomNode implements Vertex {
         }
         return true;
     }
+    public List<RoomNode> getChildren(Map<String, RoomNode> roomsById) {
+        List<RoomNode> children = new ArrayList<>();
+        Collection<String> values = neighbors.values();
+        for (String roomIdKey : values) {
+            children.add(roomsById.get(roomIdKey));
+        }
+        return children;
 
+    }
     public CardinalPoint whichWayIsThisRoom(RoomNode roomNode) {
 
         for (CardinalPoint key : neighbors.keySet()) {
@@ -115,6 +130,8 @@ public class RoomNode implements Vertex {
     public String getName() {
         return name;
     }
+
+
 
     @Override
     public String toString() {

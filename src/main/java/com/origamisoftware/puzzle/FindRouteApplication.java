@@ -91,16 +91,19 @@ public class FindRouteApplication {
             Map<String, RoomNode> roomByContents = new HashMap<>();
 
             // find all the items in the all the rooms, populating roomByContents
-            MapUtils.findPathTo(startingPoint, roomsById, itemsToFind, roomByContents);
+            ///MapUtils.findPathTo(startingPoint, roomsById, itemsToFind, roomByContents);
+            MapUtils.searchRooms(startingPoint, roomsById, itemsToFind, roomByContents);
 
             // find the shortest path to each item, one item at a time from the room the last item was found it.
             AdventureMap adventureMap = new AdventureMap(roomsById, roomByContents);
 
+            System.out.println("Find Each item from the previous room the fastest.");
             List<RoomNode> rooms = new ArrayList<>();
+
             rooms.add(startingPoint);
             for (String item : itemsToFind) {
-                rooms   = MapUtils.findShortestPath(adventureMap, rooms.get(rooms.size() - 1),item);
-                System.out.println("I collect the " + item );
+                rooms = MapUtils.findShortestPath(adventureMap, rooms.get(rooms.size() - 1), item);
+                System.out.println("I collect the " + item);
             }
 
         } catch (ParserConfigurationException | SAXException | IOException e) {

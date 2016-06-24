@@ -2,6 +2,7 @@ package com.origamisoftware.puzzle.util;
 
 import com.origamisoftware.puzzle.model.AdventureMap;
 import com.origamisoftware.puzzle.model.CardinalPoint;
+import com.origamisoftware.puzzle.model.DepthFirstSearch;
 import com.origamisoftware.puzzle.model.DijkstraAlgorithm;
 import com.origamisoftware.puzzle.model.Edge;
 import com.origamisoftware.puzzle.model.Graph;
@@ -73,6 +74,7 @@ public class MapUtils {
     public static List<RouteSegment> findItems(Map<String, RoomNode> roomsById, RoomNode startingPoint,
                                                List<String> itemsToFind, Map<String, RoomNode> roomsByContents) {
 
+
         List<RouteSegment> path = new ArrayList<>();
         Queue<RoomNode> queue = new LinkedList<RoomNode>();
 
@@ -116,7 +118,10 @@ public class MapUtils {
     }
 
 
+
+
     // bsf
+
     public static boolean findPathTo(RoomNode startingNode, Map<String, RoomNode> roomsById, List<String> items,
                                      Map<String, RoomNode> roomsByContents) {
 
@@ -171,7 +176,8 @@ public class MapUtils {
      * @return a list of rooms, the last room in the list will be the room where the item was found.
      * and empty list means the item was not found.
      */
-    public static List<RoomNode> findShortestPath(AdventureMap adventureMap, RoomNode startingPoint, String itemToFind) {
+    public static List<RoomNode> findShortestPath(AdventureMap adventureMap, RoomNode startingPoint,
+                                                  String itemToFind) {
 
         List<RoomNode> rooms = new ArrayList<>();
         RoomNode roomThatContains = adventureMap.getRoomThatContains(itemToFind);
@@ -253,5 +259,11 @@ public class MapUtils {
             returnValue = namedItem.getNodeValue();
         }
         return returnValue;
+    }
+
+    public static void searchRooms(RoomNode startingPoint, Map<String, RoomNode> roomsById, List<String> itemsToFind,
+                                   Map<String, RoomNode> roomByContents) {
+
+       new DepthFirstSearch(roomsById,startingPoint,  itemsToFind,  roomByContents);
     }
 }
