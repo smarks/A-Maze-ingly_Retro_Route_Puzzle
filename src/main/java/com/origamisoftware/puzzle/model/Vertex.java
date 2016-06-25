@@ -1,5 +1,9 @@
 package com.origamisoftware.puzzle.model;
 
+import com.origamisoftware.puzzle.graph.Edge;
+
+import java.util.List;
+
 /**
  * A basic interface for a Node or Vertex used by graph algorithms.
  * The interface allows us to have specific implementations of Vertex
@@ -24,5 +28,5 @@ public interface Vertex {
      */
     String getName();
 
-
+    List<Edge> getEdges();
 }

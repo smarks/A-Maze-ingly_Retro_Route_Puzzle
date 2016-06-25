@@ -1,0 +1,73 @@
+In the Scullery
+I go north
+In the Secret Passage (West)
+I go north
+In the Library
+I collect the Book
+I go west
+In the Hallway
+I go north
+In the Porch
+I go east
+In the Front Yard
+I go north
+In the Dirt Track
+I go east
+In the Mesa
+I go east
+In the Foothills
+I go south
+In the Pine Forest
+I collect the Pine-cone
+I go west
+In the Scree Slope
+I go south
+In the Cave Entrance
+I go south
+In the Secret Passage (East)
+I go south
+In the Huge Cavern
+I go east
+In the Narrow Crawl
+I go north
+In the Underground Lake
+I collect the Lamp
+I go south
+In the Narrow Crawl
+I go west
+In the Huge Cavern
+I go north
+In the Secret Passage (East)
+I go north
+In the Cave Entrance
+I go east
+In the Low Tunnel
+I collect the Pickaxe
+I go west
+In the Cave Entrance
+I go north
+In the Scree Slope
+I go east
+In the Pine Forest
+I collect the Pine-cone
+I go north
+In the Foothills
+I go west
+In the Mesa
+I go west
+In the Dirt Track
+I go west
+In the Pond
+I collect the Fishing-rod
+I go east
+In the Dirt Track
+I go south
+In the Front Yard
+I go west
+In the Porch
+I go south
+In the Hallway
+I go south
+In the Dining Room
+I collect the Plate
+I found all 6 items!

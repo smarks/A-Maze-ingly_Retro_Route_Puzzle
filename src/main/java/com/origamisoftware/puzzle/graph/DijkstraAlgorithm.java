@@ -1,5 +1,6 @@
-package com.origamisoftware.puzzle.model;
+package com.origamisoftware.puzzle.graph;
 
+import com.origamisoftware.puzzle.model.Vertex;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +11,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * This class finds the shortest path between to nodes in a connected graph.
+ * <p>
+ * This code was provided courtesy of the internet:
+ * <p>
+ * http://www.vogella.com/tutorials/JavaAlgorithmsDijkstra/article.html
+ * <p>
+ * This is the only code I did not explicitly write for this project.
+ * <p>
+ * Although versions of Dijkstra's Algorithm are available via third
+ * party libraries such as hipster4j http://www.hipster4j.org/ and jgrapht
+ * http://jgrapht.org/ but using those frameworks would have been too
+ * cumbersome for the current use cases. If the use cases where to expand
+ * leveraging one of those frameworks might make sense.
+ */
 public class DijkstraAlgorithm {
 
     private final List<Edge> edges;
@@ -18,12 +34,22 @@ public class DijkstraAlgorithm {
     private Map<Vertex, Vertex> predecessors;
     private Map<Vertex, Integer> distance;
 
+    /**
+     * Create new instance of DijkstraAlgorithm
+     *
+     * @param graph the graph to search
+     */
     public DijkstraAlgorithm(Graph graph) {
         // create a copy of the array so that we can operate on this array
         List<Vertex> nodes = new ArrayList<>(graph.getVertexes());
         this.edges = new ArrayList<>(graph.getEdges());
     }
 
+    /**
+     * Search the graph. Call getPath() to get the results.
+     *
+     * @param source the starting node
+     */
     public void execute(Vertex source) {
         settledNodes = new HashSet<>();
         unSettledNodes = new HashSet<>();
@@ -39,13 +65,32 @@ public class DijkstraAlgorithm {
         }
     }
 
+    /*
+  * This method returns the path from the source to the selected target and
+  * NULL if no path exists
+  */
+    public LinkedList<Vertex> getPath(Vertex target) {
+        LinkedList<Vertex> path = new LinkedList<>();
+        Vertex step = target;
+        // check if a path exists
+        if (predecessors.get(step) == null) {
+            return null;
+        }
+        path.add(step);
+        while (predecessors.get(step) != null) {
+            step = predecessors.get(step);
+            path.add(step);
+        }
+        // Put it into the correct order
+        Collections.reverse(path);
+        return path;
+    }
+
     private void findMinimalDistances(Vertex node) {
         List<Vertex> adjacentNodes = getNeighbors(node);
         for (Vertex target : adjacentNodes) {
-            if (getShortestDistance(target) > getShortestDistance(node)
-                    + getDistance(node, target)) {
-                distance.put(target, getShortestDistance(node)
-                        + getDistance(node, target));
+            if (getShortestDistance(target) > getShortestDistance(node) + getDistance(node, target)) {
+                distance.put(target, getShortestDistance(node) + getDistance(node, target));
                 predecessors.put(target, node);
                 unSettledNodes.add(target);
             }
@@ -55,8 +100,7 @@ public class DijkstraAlgorithm {
 
     private int getDistance(Vertex node, Vertex target) {
         for (Edge edge : edges) {
-            if (edge.getSource().equals(node)
-                    && edge.getDestination().equals(target)) {
+            if (edge.getSource().equals(node) && edge.getDestination().equals(target)) {
                 return edge.getWeight();
             }
         }
@@ -66,8 +110,7 @@ public class DijkstraAlgorithm {
     private List<Vertex> getNeighbors(Vertex node) {
         List<Vertex> neighbors = new ArrayList<>();
         for (Edge edge : edges) {
-            if (edge.getSource().equals(node)
-                    && !isSettled(edge.getDestination())) {
+            if (edge.getSource().equals(node) && !isSettled(edge.getDestination())) {
                 neighbors.add(edge.getDestination());
             }
         }
@@ -99,27 +142,6 @@ public class DijkstraAlgorithm {
         } else {
             return d;
         }
-    }
-
-    /*
-     * This method returns the path from the source to the selected target and
-     * NULL if no path exists
-     */
-    public LinkedList<Vertex> getPath(Vertex target) {
-        LinkedList<Vertex> path = new LinkedList<>();
-        Vertex step = target;
-        // check if a path exists
-        if (predecessors.get(step) == null) {
-            return null;
-        }
-        path.add(step);
-        while (predecessors.get(step) != null) {
-            step = predecessors.get(step);
-            path.add(step);
-        }
-        // Put it into the correct order
-        Collections.reverse(path);
-        return path;
     }
 
 }

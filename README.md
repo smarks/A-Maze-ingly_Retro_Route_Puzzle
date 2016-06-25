@@ -60,3 +60,4 @@ I collect the Potted Plant
 Make sure you pay attention to whether your moves are actually valid in the context of what is described in the map.xml file.
 
 You may have some questions you'd like to ask to clarify the above requirements, e.g. "Does my output have to be exactly like the example? Do I have to find the optimal route or simply a valid route?" We’re unlikely to provide any further clarification, but instead would ask you to make and state your assumptions as part of completing this exercise.
+

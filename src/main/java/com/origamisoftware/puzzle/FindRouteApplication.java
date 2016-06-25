@@ -1,6 +1,5 @@
 package com.origamisoftware.puzzle;
 
-import com.origamisoftware.puzzle.model.AdventureMap;
 import com.origamisoftware.puzzle.model.RoomNode;
 import com.origamisoftware.puzzle.util.MapUtils;
 import com.origamisoftware.puzzle.util.XMLUtils;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +27,6 @@ import java.util.Map;
  */
 class FindRouteApplication {
 
-
     /**
      * This inner is used to specify the command line arguments using the Args4j framework.
      */
@@ -40,7 +37,6 @@ class FindRouteApplication {
         @Option(required = true, name = "-scenario", usage = "Specify the full path to text file that describes a search scenario")
         private String scenario;
     }
-
 
     /**
      * Provide a single exit point for the application.
@@ -57,7 +53,6 @@ class FindRouteApplication {
         for (String roomKeys : map.keySet()) {
             System.out.println(map.get(roomKeys));
         }
-
     }
 
     /**
@@ -103,21 +98,27 @@ class FindRouteApplication {
         RoomNode startingPoint = roomsById.get(scenario.get(0));
         List<String> itemsToFind = scenario.subList(1, scenario.size());
 
-        // This map is filled by searchRooms method. The key is the item and the value is the room the item is in.
-        Map<String, RoomNode> roomByContents = new HashMap<>();
+        /* Find all the items in the all the rooms, populating roomByContents
+         * The key is the item and the value is the room the item was found in in.
+         *
+         * The log starts out empty but is filled as the rooms are searched with the steps the adventurer
+         * takes to find the items.
+         */
+        List<String> log = new ArrayList<>();
+        Map<String, RoomNode> roomByContents = MapUtils.findItems(roomsById, itemsToFind,startingPoint, log);
 
-        // Find all the items in the all the rooms, populating roomByContents
-        MapUtils.searchRooms(startingPoint, roomsById, itemsToFind, roomByContents);
+        for(String step: log) {
+            System.out.println(step);
+        }
 
         // Find the shortest path to each item, one item at a time from the room the last item was found it.
         System.out.println(
                 "\n\n>> Find Each item starting from the starting point or the room where the last item was found.\n\n");
 
-        AdventureMap adventureMap = new AdventureMap(roomsById, roomByContents);
         List<RoomNode> rooms = new ArrayList<>();
         rooms.add(startingPoint);
         for (String item : itemsToFind) {
-            rooms = MapUtils.findShortestPath(adventureMap, rooms.get(rooms.size() - 1), item);
+            rooms = MapUtils.findShortestPath(roomByContents,roomsById, rooms.get(rooms.size() - 1), item);
             System.out.println("I collect the " + item);
         }
     }
