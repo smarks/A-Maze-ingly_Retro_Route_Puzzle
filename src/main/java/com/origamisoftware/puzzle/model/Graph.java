@@ -11,7 +11,7 @@ import java.util.List;
  * This class will contain all the RoomNodes and Edges as parsed from the input data.
  * (The map.xml file)
  *
- * This models an undirected graph
+ * This models an undirected graph, connected graph.
  *
  * The Graph class is immutable.
  *

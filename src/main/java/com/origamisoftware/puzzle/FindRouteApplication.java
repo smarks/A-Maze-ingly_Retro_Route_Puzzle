@@ -61,12 +61,14 @@ class FindRouteApplication {
     }
 
     /**
-     * Main entry point
+     * Main entry point of the find the items in the map program.
      *
      * @param args - a total of 4 arguments are required.
      *             -map [path to map.xml file]  -scenario [path to scenario.txt file]
      */
     public static void main(String[] args) {
+
+        // get the paths to the two input files or punt
         AppArgs appArgs = new AppArgs();
 
         CmdLineParser parser = new CmdLineParser(appArgs);
@@ -77,40 +79,48 @@ class FindRouteApplication {
             exit(-1);
         }
 
+        // the contents of the scenario file
+        List<String> scenario;
+
+        /**
+         *  Map that will be created by parsing XML document. The key is the room Id as provided in the XML
+         *  The value is a RoomNode object which contains all the information provided in the XML Room element.
+         */
+        Map<String, RoomNode> roomsById;
+
         try {
 
-            List<String> scenario = Files.readAllLines(Paths.get((appArgs.scenario)));
+            scenario = Files.readAllLines(Paths.get((appArgs.scenario)));
 
             // parse the XML and return a map where the keys are the room ids the value is a RoomNode (or vertex).
-            Map<String, RoomNode> roomsById = MapUtils.buildMapModelFromDocument(XMLUtils.parseXML(appArgs.map));
-
-            // the first line in the scenario is the starting point, the remains lines are items to find.
-            RoomNode startingPoint = roomsById.get(scenario.get(0));
-            List<String> itemsToFind = scenario.subList(1, scenario.size());
-
-            Map<String, RoomNode> roomByContents = new HashMap<>();
-
-            // find all the items in the all the rooms, populating roomByContents
-            ///MapUtils.findPathTo(startingPoint, roomsById, itemsToFind, roomByContents);
-            MapUtils.searchRooms(startingPoint, roomsById, itemsToFind, roomByContents);
-
-            // find the shortest path to each item, one item at a time from the room the last item was found it.
-            AdventureMap adventureMap = new AdventureMap(roomsById, roomByContents);
-
-            System.out.println("\n\nFind Each item from starting from previous room the fastest.\n\n");
-            List<RoomNode> rooms = new ArrayList<>();
-
-            rooms.add(startingPoint);
-            for (String item : itemsToFind) {
-                rooms = MapUtils.findShortestPath(adventureMap, rooms.get(rooms.size() - 1), item);
-                System.out.println("I collect the " + item);
-            }
+            roomsById = MapUtils.buildMapModelFromDocument(XMLUtils.parseXML(appArgs.map));
 
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            throw new IllegalStateException("Could not parse " + appArgs.map, e);
+            throw new IllegalStateException("Error reading input files", e);
         }
 
-    }
+        // The first line in the scenario is the room to start in. The remaining lines are items to find.
+        RoomNode startingPoint = roomsById.get(scenario.get(0));
+        List<String> itemsToFind = scenario.subList(1, scenario.size());
 
+        // This map is filled by searchRooms method. The key is the item and the value is the room the item is in.
+        Map<String, RoomNode> roomByContents = new HashMap<>();
+
+        // Find all the items in the all the rooms, populating roomByContents
+        MapUtils.searchRooms(startingPoint, roomsById, itemsToFind, roomByContents);
+
+        // Find the shortest path to each item, one item at a time from the room the last item was found it.
+        System.out.println(
+                "\n\n>> Find Each item starting from the starting point or the room where the last item was found.\n\n");
+
+        AdventureMap adventureMap = new AdventureMap(roomsById, roomByContents);
+        List<RoomNode> rooms = new ArrayList<>();
+        rooms.add(startingPoint);
+        for (String item : itemsToFind) {
+            rooms = MapUtils.findShortestPath(adventureMap, rooms.get(rooms.size() - 1), item);
+            System.out.println("I collect the " + item);
+        }
+    }
 }
+
 
