@@ -25,7 +25,7 @@ import java.util.Map;
 public class MapUtils {
 
     // these XML element attribute names. If the XML changes these would have to change as well.
-    final private static String XML_TAG_NAME_FOR_ROOM = "room";
+    final static String XML_TAG_NAME_FOR_ROOM = "room";
     final private static String XML_ROOM_ATTRIBUTE_NAME_FOR_ID = "id";
     final private static String XML_ROOM_ATTRIBUTE_KEY_FOR_ROOM_NAME = "name";
     final private static String XML_ROOM_ATTRIBUTE_KEY_FOR_OBJECT_NAME = "name";

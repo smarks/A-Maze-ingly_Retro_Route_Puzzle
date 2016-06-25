@@ -23,17 +23,6 @@ public class AdventureMap {
     }
 
     /**
-     * Get all the room nodes by room id
-     *
-     * @return a map data structure of all the rooms on the adventure map
-     */
-    public Map<String, RoomNode> getRoomContents() {
-        return roomContentsByItem;
-    }
-
-
-
-    /**
      * Return the room that contains the specified contents or null if no room has the contents.
      *
      * @param contents a string value e.g. book
