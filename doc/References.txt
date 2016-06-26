@@ -1,4 +1,15 @@
 I used the following websites and books while completing this puzzle
 
+WebSites:
+
 http://www.vogella.com/tutorials/JavaAlgorithmsDijkstra/article.html
 
+http://www.codeproject.com/Articles/32212/Introduction-to-Graph-with-Breadth-First-Search-BF
+
+http://algs4.cs.princeton.edu/home/
+
+http://stackoverflow.com/
+
+Books:
+
+Algorithms, 4th Edition by Robert Sedgewick and Kevin Wayne

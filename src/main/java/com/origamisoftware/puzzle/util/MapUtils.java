@@ -61,6 +61,13 @@ public class MapUtils {
         return roomMapById;
     }
 
+    /**
+     * Convert an XML data structure (Node) to our model of a room.
+     *
+     * @param roomMapById a map of all the rooms by id
+     * @param node the XML data structure
+     * @return a RoomNode
+     */
     private static RoomNode node2RoomNode(Map<String, RoomNode> roomMapById, Node node) {
 
         NamedNodeMap attributes = node.getAttributes();
@@ -142,8 +149,8 @@ public class MapUtils {
     /**
      * Find the shortest path to the room that contains the specified item.
      * <p>
-     * The list of rooms must all be connected (i.e. the graph must be connected.
-     * The item must be in one of the room. If either of these requirement is not true
+     * The list of rooms must all be connected (i.e. the graph must be connected.)
+     * The item must be in one of the rooms. If either of these requirements is not true
      * an InvalidGraphSearchParametersException will be thrown.
      *
      * @param roomsByContents a map of the rooms by contents. The key is the item. The value is RoomNode the item is in.

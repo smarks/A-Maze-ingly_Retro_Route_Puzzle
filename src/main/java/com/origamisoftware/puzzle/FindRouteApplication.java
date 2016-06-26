@@ -50,13 +50,6 @@ class FindRouteApplication {
         System.exit(code);
     }
 
-    private static void printMap(Map<String, RoomNode> map) {
-        System.out.println("There are " + map.size() + " rooms");
-        for (String roomKeys : map.keySet()) {
-            System.out.println(map.get(roomKeys));
-        }
-    }
-
     /**
      * Main entry point of the find the items in the map program.
      *
@@ -79,7 +72,7 @@ class FindRouteApplication {
         // the contents of the scenario file
         List<String> scenario;
 
-        /**
+        /*
          *  Map that will be created by parsing XML document. The key is the room id as provided in the XML.
          *  The value is a RoomNode object which contains all the information provided in the XML Room element.
          */
@@ -113,16 +106,19 @@ class FindRouteApplication {
             System.out.println(step);
         }
 
-        // Find the shortest path to each item, one item at a time. Beginning from the room the last item was found.
+        System.out.println("\nNow that I know where each item is I can go more directly next time!\n");
+
+        // Find the shortest path to each item, one item at a time. Beginning from the room the last item was found in.
         System.out.println(
-                "\n\n>> Find Each item starting from the starting point or the room where the last item was found.\n\n");
+                "\nFind each item starting from the starting point or the room where the last item was found.\n\n");
 
         List<RoomNode> rooms = new ArrayList<>();
         rooms.add(startingPoint);
         for (String item : itemsToFind) {
             try {
-                rooms = MapUtils.findShortestPath(roomByContents, roomsById, startingPoint, item);
-                System.out.println("I collect the " + item);
+                System.out.println("Starting in the "+ startingPoint.getName() +  " I begin looking for " + item);
+                rooms = MapUtils.findShortestPath(roomsById,roomByContents, startingPoint, item);
+                System.out.println("I collect the " + item + "\n");
                 // the room to start from will be the room where there previous item was found.
                 startingPoint = Iterables.getLast(rooms);
             } catch (InvalidGraphSearchParametersException e) {
