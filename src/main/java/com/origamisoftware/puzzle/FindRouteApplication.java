@@ -33,10 +33,10 @@ class FindRouteApplication {
      * This inner is used to specify the command line arguments using the Args4j framework.
      */
     private static class AppArgs {
-        @Option(required = true, name = "-map", usage = "Specify the full path to an xml that describes the map")
+        @Option(required = true, name = "-map", usage = "Specify the path to an xml that describes the map")
         private String map;
 
-        @Option(required = true, name = "-scenario", usage = "Specify the full path to text file that describes a search scenario")
+        @Option(required = true, name = "-scenario", usage = "Specify the path to text file that describes a search scenario")
         private String scenario;
     }
 

@@ -3,18 +3,34 @@
 This project contains a solution to the A-Maze-ingly_Retro_Route_Puzzle
 as defined below.
 
+# Building and Running 
 
-# Usage
+To run from the jar
+
+java -jar com.origamisoftware.puzzle-1.0-SNAPSHOT-jar-with-dependencies.jar
+ -map VAL      : Specify the path to an xml that describes the map
+ -scenario VAL : Specify the path to text file that describes a search
+                 scenario
+                              
+e.g. 
+                
+java -jar com.origamisoftware.puzzle-1.0-SNAPSHOT-jar-with-dependencies.jar  map.xml  -scenario scenario.txt
+
+From Source:
 
 From the root directory of this project
-make a jar file by using maven and issuing this command 
+make a jar file by using maven and issuing this command:
 
 > mvn clean compile assembly:single
 
-run the program by issuing the following two commands 
+run the program by issuing the following two commands:
 
 > cd target
 > java -jar com.origamisoftware.puzzle-1.0-SNAPSHOT-jar-with-dependencies.jar  -map ../data/map.xml  -scenario ../data/scenario.txt
+
+If you want to run the unit tests run this command:
+
+> mvn test 
 
 
 # Code Exercise: A-Maze-ingly Retro Route Puzzle
