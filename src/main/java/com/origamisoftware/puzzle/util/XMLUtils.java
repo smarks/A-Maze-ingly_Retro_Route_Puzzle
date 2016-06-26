@@ -16,7 +16,7 @@ import java.io.IOException;
 public class XMLUtils {
 
     /**
-     * Given a path to an XML instance parse it onto a Document.
+     * Given a path to an XML instance parse it into a Document.
      *
      * @param pathToMap - the file to parse. If there is DTD associated with the file it will be used to validate the
      *                  instance.

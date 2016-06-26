@@ -27,14 +27,14 @@ import java.util.Stack;
  */
 public class MapUtils {
 
-    // these XML element attribute names. If the XML changes these would have to change as well.
+    // these XML elements attribute names. If the XML changes, these would have to change as well.
     final static String XML_TAG_NAME_FOR_ROOM = "room";
     final private static String XML_ROOM_ATTRIBUTE_NAME_FOR_ID = "id";
     final private static String XML_ROOM_ATTRIBUTE_KEY_FOR_ROOM_NAME = "name";
     final private static String XML_ROOM_ATTRIBUTE_KEY_FOR_OBJECT_NAME = "name";
 
     /**
-     * Convert an XML instance to a Map of RoomNodes by Id.
+     * Convert an XML instance to a Map of RoomNodes by id.
      *
      * @param document the XML document
      * @return a Map where the key is the room id and the value which maps to a RoomNode.
@@ -45,8 +45,8 @@ public class MapUtils {
 
         int count = rooms.getLength();
 
-        /* The roomNodes will hold the data in XML room elements. Since we know that size
-         * we can pre-size our array avoiding any performance penalties  due to dynamic resizing
+        /* The RoomNodes will hold the data in XML room elements. Since we know that size,
+         * we can pre-size our array avoiding any performance penalties  due to dynamic resizing.
          */
         Map<String, RoomNode> roomMapById = new HashMap<>(count);
 
@@ -80,7 +80,7 @@ public class MapUtils {
         for (CardinalPoint linkDirection : CardinalPoint.values()) {
             String linkId = getAttributeValueOrNull(attributes, linkDirection.getName());
 
-            // lots of rooms won't have a link for each direction, that's OK
+            // lots of rooms won't have a link for each direction, that's OK.
             if (linkId != null) {
                 RoomNode toBeCompleted = null;
                 if (!roomMapById.containsKey(linkId)) {
@@ -98,15 +98,15 @@ public class MapUtils {
     }
 
     /**
-     * Using the XML node as the source datetime if the room in question has any contents and if
-     * so update the roomNode with those contents.
+     * Using the XML data determine if a room contains an item
+     * and if so, put that item in the provided RoomNode
      *
      * @param node     the XML data
-     * @param roomNode the model data
+     * @param roomNode the model data to store the item (if one is present)
      */
     private static void populateRoomContents(Node node, RoomNode roomNode) {
 
-        // the XML node will have child nodes if it has Object element which holds the room's contents.
+        // the XML node will have child nodes if it has an Object element which holds the room's contents.
         if (node.hasChildNodes()) {
             int length = node.getChildNodes().getLength();
             NodeList childNodes = node.getChildNodes();
@@ -128,7 +128,7 @@ public class MapUtils {
      *
      * @param attributes    the map of attributes
      * @param attributeName the particular attribute whose value will be returned.
-     * @return the value of the that corresponds to the attribute name provided.
+     * @return the value that corresponds to the attribute name provided.
      */
     private static String getAttributeValueOrNull(NamedNodeMap attributes, String attributeName) {
         String returnValue = null;
@@ -140,15 +140,28 @@ public class MapUtils {
     }
 
     /**
-     * Find the shortest path to the room that contains the specified item and returns the list of nodes
-     * starting from the specified starting node leading to the room with the item in it.
+     * Find the shortest path to the room that contains the specified item.
+     * <p>
+     * The list of rooms must all be connected (i.e. the graph must be connected.
+     * The item must be in one of the room. If either of these requirement is not true
+     * an InvalidGraphSearchParametersException will be thrown.
      *
-     * @return a list of rooms, the last room in the list will be the room where the item was found.
-     * and empty list means the item was not found.
+     * @param roomsByContents a map of the rooms by contents. The key is the item. The value is RoomNode the item is in.
+     * @param roomsById       a map of all the RoomNodes by their ID.
+     * @param startingPoint   the RoomNode to start looking in.
+     * @param itemToFind      the item to find.
+     * @return The list of rooms that need to be traversed in order to find the item.
+     * The last room in the list will be the room where the item was found.
+     * @throws InvalidGraphSearchParametersException if the item is not in any of the rooms, or if the graph is not
+     *                                               connected.
      */
-    public static List<RoomNode> findShortestPath(Map<String, RoomNode> roomsByContents,
-                                                  Map<String, RoomNode> roomsById, RoomNode startingPoint,
-                                                  String itemToFind) {
+    public static List<RoomNode> findShortestPath(Map<String, RoomNode> roomsById,
+                                                  Map<String, RoomNode> roomsByContents, RoomNode startingPoint,
+                                                  String itemToFind) throws InvalidGraphSearchParametersException {
+
+         if (!roomsByContents.containsKey(itemToFind)) {
+            throw new InvalidGraphSearchParametersException("The item " + itemToFind + " is not in any of the rooms");
+        }
 
         List<RoomNode> rooms = new ArrayList<>();
         RoomNode roomThatContains = roomsByContents.get(itemToFind);
@@ -163,7 +176,9 @@ public class MapUtils {
         DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph);
         dijkstra.execute(startingPoint);
         LinkedList<Vertex> path = dijkstra.getPath(roomThatContains);
-
+        if (path == null){
+            throw new InvalidGraphSearchParametersException("The graph is not connected.");
+        }
         int numberOfRooms = path.size();
         for (int index = 0; index < numberOfRooms; index++) {
             Vertex vertex = path.get(index);
@@ -182,15 +197,15 @@ public class MapUtils {
 
     /**
      * This is a modified DSF algorithm. It takes the iterative (using a Stack) approach and not the  recursive one.
-     * A real DFS is smart and skips vertex that have been visited before
-     * but our algorithm models how an adventurer would go from room to room at times having to back track
+     * A real DFS is smart and skips vertex that have been visited before.
+     * But our algorithm models how an adventurer would go from room to room at times having to back track
      * and revisit rooms they have been in before.
      * <p>
      * The direction the the adventure travels and what items are collected are written into the provided StringBuffer
      *
      * @param roomsById    a map of RoomNodes (vertex) by their id
      * @param itemsToFind  a list of items to search for
-     * @param startingNode a the RoomNode (vertex) to start searching from.
+     * @param startingNode a RoomNode (vertex) to start searching from.
      * @param log          an empty list of Strings which is populated by the steps taken to find all the items.
      * @return a map whose key is an item and whose value is the RoomNode the item was found in.
      */
@@ -202,7 +217,7 @@ public class MapUtils {
 
         Map<String, RoomNode> roomByContents = new HashMap<>(itemsToFind.size());
 
-        // Each room visited is recorded here. This allows up to back track into previously visited
+        // Each room visited is recorded here. This allows us to back track into previously visited.
         Stack<RoomNode> steps = new Stack<>();
 
         // Seed the currentNode with the starting Node.
@@ -245,7 +260,7 @@ public class MapUtils {
                     if (!neighboringRoomIterator.hasNext()) {
                         // We have to back track.
                         steps.pop();
-                        // We have to pop twice because the stack already has the current room and we want the one after that.
+                        // We  have to pop twice because the stack already has the current room and we want the one after that.
                         currentNode = steps.pop();
                     } // Otherwise loop back into the next neighboring room and go from there.
 
@@ -262,7 +277,7 @@ public class MapUtils {
     }
 
     /**
-     * When the number of rooms in the roomByContents map equals the number of items being search for all items have
+     * When the number of rooms in the roomByContents map equals the number of items being searched, all items have
      * been found.
      * <p>
      *
@@ -282,9 +297,9 @@ public class MapUtils {
     }
 
     /**
-     * Check the contents of the room for items we are looking for. If an item is found note it in the console
+     * Check the contents of the room for items we are looking for. If an item is found, note it in the console
      * and also place the room in a map whose key is the item. When we are done, we will have a map of what room
-     * each item is in.  Finally remove the item from list of items being searched for.
+     * each item is in.  Finally, remove the item from list of items being searched for.
      * <p>
      *
      * @param itemsToFind a list of items to search for

@@ -1,6 +1,8 @@
 package com.origamisoftware.puzzle;
 
+import com.google.common.collect.Iterables;
 import com.origamisoftware.puzzle.model.RoomNode;
+import com.origamisoftware.puzzle.util.InvalidGraphSearchParametersException;
 import com.origamisoftware.puzzle.util.MapUtils;
 import com.origamisoftware.puzzle.util.XMLUtils;
 import org.kohsuke.args4j.CmdLineException;
@@ -19,9 +21,9 @@ import java.util.Map;
 /**
  * Main entry point for the  A-Maze-ingly Retro Route Puzzle
  * <p>
- * Given a Map which contains a list of rooms and what they contain which other rooms they connect to, and another file
- * which contains a list of items to collect, this program will determine a route through the rooms that will result in being
- * to collect all the items.
+ * Given a Map which contains a list of rooms and what they contain, which other rooms they connect to, and another file
+ * which contains a list of items to collect. This program will determine a route through the rooms that will result in
+ * collecting all the items.
  *
  * @author <a href="mailto:smarks@origamisoftware.com"></a>
  */
@@ -78,7 +80,7 @@ class FindRouteApplication {
         List<String> scenario;
 
         /**
-         *  Map that will be created by parsing XML document. The key is the room Id as provided in the XML
+         *  Map that will be created by parsing XML document. The key is the room id as provided in the XML.
          *  The value is a RoomNode object which contains all the information provided in the XML Room element.
          */
         Map<String, RoomNode> roomsById;
@@ -87,7 +89,7 @@ class FindRouteApplication {
 
             scenario = Files.readAllLines(Paths.get((appArgs.scenario)));
 
-            // parse the XML and return a map where the keys are the room ids the value is a RoomNode (or vertex).
+            // parse the XML and return a map where the keys are the room ids the value is a RoomNode (i.e. vertex).
             roomsById = MapUtils.buildMapModelFromDocument(XMLUtils.parseXML(appArgs.map));
 
         } catch (ParserConfigurationException | SAXException | IOException e) {
@@ -99,29 +101,37 @@ class FindRouteApplication {
         List<String> itemsToFind = scenario.subList(1, scenario.size());
 
         /* Find all the items in the all the rooms, populating roomByContents
-         * The key is the item and the value is the room the item was found in in.
+         * The key is the item and the value is the room where the item was found in in.
          *
-         * The log starts out empty but is filled as the rooms are searched with the steps the adventurer
+         * The log starts out empty, but is filled as the rooms are searched with the steps the adventurer
          * takes to find the items.
          */
         List<String> log = new ArrayList<>();
-        Map<String, RoomNode> roomByContents = MapUtils.findItems(roomsById, itemsToFind,startingPoint, log);
+        Map<String, RoomNode> roomByContents = MapUtils.findItems(roomsById, itemsToFind, startingPoint, log);
 
-        for(String step: log) {
+        for (String step : log) {
             System.out.println(step);
         }
 
-        // Find the shortest path to each item, one item at a time from the room the last item was found it.
+        // Find the shortest path to each item, one item at a time. Beginning from the room the last item was found.
         System.out.println(
                 "\n\n>> Find Each item starting from the starting point or the room where the last item was found.\n\n");
 
         List<RoomNode> rooms = new ArrayList<>();
         rooms.add(startingPoint);
         for (String item : itemsToFind) {
-            rooms = MapUtils.findShortestPath(roomByContents,roomsById, rooms.get(rooms.size() - 1), item);
-            System.out.println("I collect the " + item);
+            try {
+                rooms = MapUtils.findShortestPath(roomByContents, roomsById, startingPoint, item);
+                System.out.println("I collect the " + item);
+                // the room to start from will be the room where there previous item was found.
+                startingPoint = Iterables.getLast(rooms);
+            } catch (InvalidGraphSearchParametersException e) {
+                System.out.println("I could not find a path to " + item +
+                        " Since this is not a connected graph or the item is not in any rooms, I am going to stop now.");
+            }
         }
     }
 }
+
 
 

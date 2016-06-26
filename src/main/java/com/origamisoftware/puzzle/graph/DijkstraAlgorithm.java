@@ -20,11 +20,11 @@ import java.util.Set;
  * <p>
  * This is the only code I did not explicitly write for this project.
  * <p>
- * Although versions of Dijkstra's Algorithm are available via third
+ * Although, versions of Dijkstra's Algorithm are available via third
  * party libraries such as hipster4j http://www.hipster4j.org/ and jgrapht
  * http://jgrapht.org/ but using those frameworks would have been too
- * cumbersome for the current use cases. If the use cases where to expand
- * leveraging one of those frameworks might make sense.
+ * cumbersome for the current use cases. If the use cases were to expand
+ * leveraging one of those frameworks, it might make sense.
  */
 public class DijkstraAlgorithm {
 
@@ -104,7 +104,7 @@ public class DijkstraAlgorithm {
                 return edge.getWeight();
             }
         }
-        throw new RuntimeException("Should not happen");
+        throw new IllegalStateException("Should not happen");
     }
 
     private List<Vertex> getNeighbors(Vertex node) {

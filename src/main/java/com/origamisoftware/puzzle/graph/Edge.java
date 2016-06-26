@@ -4,7 +4,7 @@ import com.origamisoftware.puzzle.model.AdjacentRoom;
 import com.origamisoftware.puzzle.model.Vertex;
 
 /**
- * A Edge models 'the line' between to nodes in a graph.
+ * An Edge models 'the line' between two nodes in a Graph.
  * <p>
  * e.g.
  * <p>
@@ -44,7 +44,7 @@ public interface Edge {
     Vertex getDestination();
 
     /**
-     * The 'weight' of this an edge.
+     * The 'weight' of this edge.
      * (Used in weighted graphs)
      *
      * @return an int value

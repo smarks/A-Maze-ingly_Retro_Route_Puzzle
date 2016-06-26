@@ -3,7 +3,7 @@ package com.origamisoftware.puzzle.model;
 import com.origamisoftware.puzzle.graph.Edge;
 
 /**
- * Models adjoining rooms (in more general graph parlance an edge)
+ * Models adjoining rooms (in more general graph parlance, an edge)
  **/
 public class AdjacentRoom implements Edge {
 
@@ -18,7 +18,7 @@ public class AdjacentRoom implements Edge {
     private final RoomNode destination;
 
     /**
-     * In some graphs (in some use cases) Edges can have a different weights associated with each one.
+     * In some graphs (in some use cases), Edges can have a different weights associated with each one.
      * E.g. a weighted graph.
      * Our use case does not require varying weight edges. That is, while our graph is technically weighted
      * all of them have a weight of one. We use a weighted graph because Dijkstra's shortest path Algorithm

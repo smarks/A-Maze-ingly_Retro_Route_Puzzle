@@ -11,9 +11,9 @@ import java.util.Map;
 /**
  * The RoomNode is a specific implementation of a Vertex or Node which models a room in the adventurer's map.
  * <p>
- * A RoomNode contains a list of adjacent rooms (edges)
+ * A RoomNode contains a list of adjacent rooms (edges).
  * <p>
- * A RoomNode may have contents (e.g. a plate, if not, it's contents will be labeled as RoomNode.NO_CONTENTS)
+ * A RoomNode may have contents (e.g. a plate, if not, it's contents will be labeled as RoomNode.NO_CONTENTS).
  */
 public class RoomNode implements Vertex {
 
@@ -38,7 +38,7 @@ public class RoomNode implements Vertex {
 
     /**
      * Constructor a RoomNode using just's its ID and name.
-     * @param name a string value as provided in the data set
+     * @param name a string value as provided in the data set.
      * @param id a  string value as provided in the data set. This value should be unique.
      */
     public RoomNode(String name, String id) {
@@ -67,7 +67,7 @@ public class RoomNode implements Vertex {
     /**
      * Add an adjacent room to this room.
      * @param roomNode the adjacent room
-     * @param direction the direction (cardinal point) of adjacent room from this room
+     * @param direction the direction (cardinal point) of the adjacent room from this room
      *                  e.g.
      *                  this room -> LivingRoom
      *                  roomId -> Basement
@@ -78,9 +78,8 @@ public class RoomNode implements Vertex {
     }
 
     /**
-     * Get all the adjacent vertexes for the this room.
      *
-     * @return A List of all the adjacent vertexes.
+     * @return A list of the edges from this room.
      */
     public List<Edge> getEdges() {
         List<Edge> edges = new ArrayList<>(neighbors.size());
@@ -94,7 +93,7 @@ public class RoomNode implements Vertex {
 
     /**
      *
-     * @return the contents of the room. If the room has not contents RoomNode.NO_CONTENTS will returned.
+     * @return the contents of the room. If the room has no contents, RoomNode.NO_CONTENTS will returned.
      *
      */
     public String getContents() {
@@ -103,14 +102,17 @@ public class RoomNode implements Vertex {
 
     /**
      *
-     * @param contents specify the room's conents.
+     * @param contents specify the room's contents.
      */
     public void setContents(String contents) {
         this.contents = contents;
     }
 
     /**
-     * @return Get all the adjacent rooms.
+     * A convenience method that returns the RoomNodes specified in as destinations
+     * in this room's edges.
+     *
+     * @return get all the adjacent rooms.
      */
     public Collection<RoomNode> getNeighbors() {
         return neighbors.values();
@@ -124,8 +126,8 @@ public class RoomNode implements Vertex {
      *
      * this --> CardinalPoint --> roomNode
      *
-     * @param roomNode tne end point
-     * @return the direction to the provided room from this room.
+     * @param roomNode the end point
+     * @return the direction to the provided room, from this room.
      */
     public CardinalPoint whichWayIsThisRoom(RoomNode roomNode) {
 
