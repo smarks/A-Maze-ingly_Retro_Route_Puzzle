@@ -1,4 +1,4 @@
-This file contains implementation notes.
+This file contains implementation notes including stated assumptions about the solution.
 
 While approaching this problem I struggled a bit with whether it was a
 search a graph problem or a find the shortest path in a graph problem.
