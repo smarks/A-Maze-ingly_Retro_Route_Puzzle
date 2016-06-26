@@ -56,7 +56,7 @@ This approach models the path an adventurer would take while exploring.
 Once the location of the items are known, Dijkstra's Algorithm can be used to find the shortest path between each item.
 However, that output does match the sample output and is not optimized to find any other items along the path,
 just a particular one. So, to provide output that matches the sample provided, I modified the DSF approach to
-backtrack (as a human would) and display the route it takes to navigate the graph until all the items are found.
+backtrack (as a human would) and display the route they takes to navigate the graph until all the items are found.
 
 Once I do that, I also show the shortest path to find each item, one item at a time by using Dijkstra Algorithm.
 
